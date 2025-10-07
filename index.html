@@ -1,39 +1,50 @@
+<!-- frontend/index.html
+     SSSTik-style frontend: paste URL OR choose a file to upload.
+     Uses /api/process (mock) and /api/upload (for file upload + transcode).
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SSSTik — Demo (Frontend + Mock Backend)</title>
-  <link rel="icon" href="assets/favicon.ico" />
+  <title>SSSTik — Demo</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="site-header">
     <div class="inner">
-      <img src="assets/logo.svg" alt="logo" class="logo" />
-      <nav class="nav">
-        <a href="#">Home</a>
-      </nav>
+      <div class="logo">MD RASEL — SSSTik Demo</div>
+      <nav class="nav"><a href="#">Home</a></nav>
     </div>
   </header>
 
   <main class="hero">
     <div class="hero-inner">
-      <h1 class="title">Download videos (Demo)</h1>
-      <p class="subtitle">Paste a video link from supported platforms and click Process (mock).</p>
+      <h1 class="title">Download & Process Videos (Demo)</h1>
+      <p class="subtitle">Paste a video link from supported platforms or upload your own video to convert to HD.</p>
 
       <div class="input-card">
         <input id="url-input" type="text" placeholder="Paste video URL (TikTok / YouTube / Instagram / Facebook)"/>
-        <button id="download-btn">Process</button>
+        <button id="process-btn">Process Link</button>
+      </div>
+
+      <div style="height:12px;"></div>
+
+      <div class="upload-card">
+        <label class="file-label">
+          <input id="file-input" type="file" accept="video/*" />
+          <span>Select video to upload & convert to 1080p</span>
+        </label>
+        <button id="upload-btn">Upload & Convert</button>
       </div>
 
       <div id="result" class="result" aria-live="polite"></div>
-      <div class="notice">This demo uses a <strong>mock backend</strong>. Replace the backend endpoint with your real API to enable downloads.</div>
+      <div class="notice">This demo uses a <strong>mock link processor</strong> and a real upload → FFmpeg conversion route. Do not use for infringing content.</div>
     </div>
   </main>
 
   <footer class="site-footer">
-    <div class="inner"><small>© MD RASEL — SSSTik Demo (Frontend + Mock)</small></div>
+    <div class="inner"><small>© MD RASEL — SSSTik Demo</small></div>
   </footer>
 
   <script src="script.js"></script>
