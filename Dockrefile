@@ -1,0 +1,22 @@
+# Dockerfile - Node 18 + ffmpeg
+FROM node:18-bullseye
+
+# install ffmpeg
+RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/src/app
+
+# copy backend and frontend
+COPY backend/package.json ./backend/package.json
+WORKDIR /usr/src/app/backend
+RUN npm install --production
+
+# copy rest of repo
+WORKDIR /usr/src/app
+COPY . .
+
+# ensure upload/processed dirs exist
+RUN mkdir -p uploads processed
+
+EXPOSE 3000
+CMD ["node", "backend/server.js"]
