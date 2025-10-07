@@ -1,37 +1,36 @@
-// Simple mock server for demo purposes
+// backend/server.js
+// Main express app — serves frontend and mounts /api endpoints
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
+const processRoutes = require('./routes/process');
+
 const app = express();
-app.use(express.json());
-app.use(express.static(path.join(__dirname)));
 
-// POST /api/process -> returns a sample response
-app.post('/api/process', (req, res) => {
-  const { url } = req.body || {};
-  // Very small validation
-  if(!url) return res.status(400).json({ error: 'Missing url' });
-  // Detect source (very naive)
-  let source = 'unknown';
-  if(url.includes('tiktok')) source = 'TikTok';
-  if(url.includes('youtube') || url.includes('youtu.be')) source = 'YouTube';
-  if(url.includes('instagram')) source = 'Instagram';
-  if(url.includes('facebook')) source = 'Facebook';
+// Serve frontend static files
+const frontendDir = path.join(__dirname, '..', 'frontend');
+app.use(express.static(frontendDir));
 
-  // Mock response: placeholder links (do NOT point to real content)
-  const id = Date.now();
-  res.json({
-    title: `${source} Sample Video (${id})`,
-    source,
-    no_watermark: `https://example.com/downloads/${id}-no-watermark.mp4`,
-    with_watermark: `https://example.com/downloads/${id}-with-watermark.mp4`,
-    audio: `https://example.com/downloads/${id}.mp3`
+// Mount API routes under /api
+app.use('/api', processRoutes);
+
+// Serve processed file downloads
+const processedDir = path.join(__dirname, '..', 'processed');
+fs.mkdirSync(processedDir, { recursive: true });
+app.get('/download/:file', (req, res) => {
+  const f = path.basename(req.params.file);
+  const p = path.join(processedDir, f);
+  if (!fs.existsSync(p)) return res.status(404).send('Not found');
+  res.download(p, f, (err) => {
+    if (err) console.error('Download error', err);
+    // optionally: fs.unlinkSync(p) to remove after download
   });
 });
 
-// serve index.html for root
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+// Fallback: serve index.html for client-side routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendDir, 'index.html'));
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, ()=> console.log('Mock server running on http://localhost:' + port));
+app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
