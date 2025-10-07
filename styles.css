@@ -1,21 +1,33 @@
+/* frontend/styles.css - simple dark theme */
 :root{
-  --bg:#0f1724; --card:#0b1220; --accent:#14b8a6; --muted:#9aa4b2;
+  --bg:#071226; --card:#0d1926; --accent:#14b8a6; --muted:#9aa4b2;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg),#071124);color:#e6eef6}
+body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg),#04101a);color:#e6eef6}
 .inner{max-width:1000px;margin:0 auto;padding:0 20px}
 .site-header{padding:18px 0}
 .site-header .inner{display:flex;align-items:center;justify-content:space-between}
-.logo{height:36px}
+.logo{font-weight:700;color:var(--accent)}
 .nav a{color:var(--muted);text-decoration:none;margin-left:18px}
 .hero{padding:60px 0;display:flex;align-items:center;justify-content:center}
 .hero-inner{text-align:center;max-width:720px}
 .title{font-size:28px;margin:0 0 8px}
 .subtitle{color:var(--muted);margin:0 0 20px}
-.input-card{display:flex;background:var(--card);padding:10px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
-.input-card input{flex:1;padding:12px 14px;border:0;background:transparent;color:inherit;outline:none;font-size:15px}
-.input-card button{background:linear-gradient(90deg,var(--accent),#06b6d4);border:0;padding:10px 16px;border-radius:8px;color:#022;cursor:pointer;font-weight:600}
+.input-card, .upload-card{display:flex;align-items:center;gap:8px;background:var(--card);padding:10px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.5);justify-content:center}
+.input-card input{flex:1;padding:12px 14px;border:0;background:transparent;color:inherit;outline:none;font-size:15px;border-radius:6px}
+.input-card button, .upload-card button{background:linear-gradient(90deg,var(--accent),#06b6d4);border:0;padding:10px 16px;border-radius:8px;color:#022;cursor:pointer;font-weight:600}
+.file-label{display:flex;align-items:center;gap:10px;color:var(--muted);cursor:pointer}
+.file-label input{display:none}
 .result{margin-top:18px;text-align:left}
+.result .card{background:#071425;padding:14px;border-radius:10px}
+.result .buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.result .btn-link{display:inline-block;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.06);text-decoration:none;color:var(--accent)}
 .notice{margin-top:14px;color:var(--muted);font-size:13px}
 .site-footer{padding:30px 0;border-top:1px solid rgba(255,255,255,0.03);margin-top:40px}
-@media (max-width:600px){.title{font-size:22px}.input-card{flex-direction:column}.input-card button{margin-top:8px;width:100%}}
+@media (max-width:600px){
+  .title{font-size:22px}
+  .input-card{flex-direction:column}
+  .input-card button{margin-top:8px;width:100%}
+  .upload-card{flex-direction:column}
+  .upload-card button{width:100%}
+}
