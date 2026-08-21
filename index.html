@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ULTRA-SAVE PRO | HANTER-XD ALL-IN-ONE</title>
+  <title>ULTRA-SAVE PRO | HANTER-XD ELITE</title>
   
   <!-- SYSTEM CONFIG -->
   <!-- MUSIC_SRC: https://raw.githubusercontent.com/HANTER-XD-OFFICIAL/DOWNLOAD/main/bg-music.mp3 -->
@@ -14,7 +14,7 @@
   <style>
     :root {
       --bg: #010103;
-      --card: rgba(6, 6, 10, 0.95);
+      --card: rgba(6, 6, 10, 0.96);
       --glow: #00fff2; 
       --brd: rgba(0, 255, 242, 0.3);
     }
@@ -51,7 +51,7 @@
 
     .action-btn { width: 100%; padding: 20px; border-radius: 15px; background: var(--glow); border: none; font-family: 'Orbitron'; font-weight: 900; color: #000; cursor: pointer; transition: 0.4s; letter-spacing: 2px; text-transform: uppercase; }
 
-    /* NODES GRID UPGRADED */
+    /* NODES GRID */
     .node-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 20px; }
     .node-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid var(--brd); padding: 12px; border-radius: 12px; }
     .node-item span { font-family: 'Orbitron'; font-size: 0.65rem; letter-spacing: 1px; }
@@ -66,10 +66,13 @@
     .btn-v { background: var(--glow); color: #000; }
     .btn-a { background: rgba(0,0,0,0.6); color: var(--glow); border: 1px solid var(--glow); }
 
-    /* CONTACT SECTION */
+    /* SUPPORT SECTION UPGRADED */
     .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
     .social-btn { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--brd); padding: 12px; border-radius: 12px; text-decoration: none; color: #fff; font-family: 'Share Tech Mono'; font-size: 0.7rem; transition: 0.3s; }
-    .social-btn:hover { background: var(--glow); color: #000; }
+    .social-btn:hover { background: var(--glow); color: #000; transform: translateY(-3px); box-shadow: 0 0 20px var(--glow); }
+
+    .gmail-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: var(--brd); border: 1px solid var(--glow); padding: 15px; border-radius: 12px; color: var(--glow); text-decoration: none; font-family: 'Orbitron'; font-size: 0.7rem; font-weight: bold; margin-top: 15px; transition: 0.3s; }
+    .gmail-btn:hover { background: var(--glow); color: #000; box-shadow: 0 0 30px var(--glow); }
 
     /* AUDIO HUD */
     #audio-hud { position: fixed; bottom: 85px; left: 15px; right: 15px; background: rgba(2, 2, 5, 0.98); border: 1px solid var(--glow); border-radius: 60px; padding: 12px 20px; display: flex; align-items: center; gap: 15px; backdrop-filter: blur(25px); z-index: 1000; transition: 0.5s ease; }
@@ -100,13 +103,13 @@
           </div>
           <div class="brand-text">
             <h1 style="font-family:'Orbitron'">HANTER-XD</h1>
-            <div style="font-family:'Share Tech Mono'; font-size:0.6rem; color:var(--glow);">CORE_SYSTEM: ALL_NODES_LIVE</div>
+            <div style="font-family:'Share Tech Mono'; font-size:0.6rem; color:var(--glow);">SYSTEM: ALL_NODES_ENCRYPTED</div>
           </div>
         </div>
 
         <div class="input-unit">
           <i class="ti ti-link"></i>
-          <input type="text" id="url" class="url-input" placeholder="Paste Remote Link (YT/IG/FB/TK)...">
+          <input type="text" id="url" class="url-input" placeholder="Paste (YouTube/Insta/FB/TikTok) Link...">
         </div>
 
         <button class="action-btn" id="run-btn" onclick="startExtraction()">Iniate Extraction</button>
@@ -114,34 +117,34 @@
         <!-- NODES STATUS -->
         <div class="node-grid">
           <div class="node-item">
-            <div style="display:flex; align-items:center; gap:10px;"><i class="ti ti-brand-tiktok" style="color:var(--glow)"></i> <span>TIKTOK</span></div>
-            <div class="badge-live">LIVE</div>
+            <div style="display:flex; align-items:center; gap:10px;"><i class="ti ti-brand-tiktok"></i> <span>TIKTOK_NODE</span></div>
+            <div class="badge-live">ONLINE</div>
           </div>
           <div class="node-item">
-            <div style="display:flex; align-items:center; gap:10px;"><i class="ti ti-brand-facebook" style="color:var(--glow)"></i> <span>FACEBOOK</span></div>
-            <div class="badge-live">LIVE</div>
+            <div style="display:flex; align-items:center; gap:10px;"><i class="ti ti-brand-facebook"></i> <span>FACEBOOK_NODE</span></div>
+            <div class="badge-live">ONLINE</div>
           </div>
           <div class="node-item">
-            <div style="display:flex; align-items:center; gap:10px;"><i class="ti ti-brand-youtube" style="color:var(--glow)"></i> <span>YOUTUBE / SHORTS</span></div>
-            <div class="badge-live">LIVE</div>
+            <div style="display:flex; align-items:center; gap:10px;"><i class="ti ti-brand-youtube"></i> <span>YOUTUBE_CORE</span></div>
+            <div class="badge-live">ONLINE</div>
           </div>
           <div class="node-item">
-            <div style="display:flex; align-items:center; gap:10px;"><i class="ti ti-brand-instagram" style="color:var(--glow)"></i> <span>INSTAGRAM REELS</span></div>
-            <div class="badge-live">LIVE</div>
+            <div style="display:flex; align-items:center; gap:10px;"><i class="ti ti-brand-instagram"></i> <span>INSTA_REEL_NODE</span></div>
+            <div class="badge-live">ONLINE</div>
           </div>
         </div>
       </div>
 
       <!-- RESULTS -->
       <div id="result-hud">
-        <div style="font-family:'Share Tech Mono'; color:var(--glow); font-size:0.7rem; margin-bottom:15px;">// EXTRACTION_SUCCESS: LINKS_DECRYPTED</div>
+        <div style="font-family:'Share Tech Mono'; color:var(--glow); font-size:0.7rem; margin-bottom:15px;">// DATA_DECRYPTION: SUCCESSFUL</div>
         <img id="thumb" class="preview-box" src="">
         <div id="btn-box"></div>
         <span onclick="location.reload()" style="font-family:'Share Tech Mono'; color:#666; font-size:0.7rem; cursor:pointer; text-decoration:underline;">[ REBOOT SYSTEM ]</span>
       </div>
     </div>
 
-    <!-- SUPPORT UNIT -->
+    <!-- SUPPORT UNIT FULL -->
     <div class="hud-panel" id="support">
       <div style="font-family:'Orbitron'; font-size:0.8rem; color:var(--glow); margin-bottom:20px; letter-spacing:2px;">CONTACT_IDENTITY.LOG</div>
       <div class="social-grid">
@@ -149,6 +152,10 @@
         <a href="https://wa.me/8801882278234" class="social-btn" target="_blank"><i class="ti ti-brand-whatsapp"></i> WHATSAPP</a>
         <a href="https://t.me/HANTER_XD_OFFICIAL" class="social-btn" target="_blank"><i class="ti ti-brand-telegram"></i> TELEGRAM</a>
         <a href="https://instagram.com/mdrasel054281" class="social-btn" target="_blank"><i class="ti ti-brand-instagram"></i> INSTAGRAM</a>
+      </div>
+      <a href="mailto:alexraselchodhury@gmail.com" class="gmail-btn"><i class="ti ti-mail-bolt"></i> ACCESS GMAIL VAULT</a>
+      <div style="margin-top:15px; padding:10px; border:1px dashed var(--brd); font-size:0.7rem; color:#666; font-family:'Share Tech Mono';">
+         <i class="ti ti-map-pin"></i> TALGHARIA, JAFARPUR(5940), JOYPURHAT
       </div>
     </div>
 
@@ -213,6 +220,7 @@
         const isTK = /tiktok\.com/i.test(input);
         const isYT = /youtube\.com|youtu\.be/i.test(input);
         const isIG = /instagram\.com/i.test(input);
+        const isFB = /facebook\.com|fb\.watch|fb\.gg/i.test(input);
         
         const _base = window.__fbBase;
         const _path = window.__fbPath;
@@ -223,25 +231,24 @@
           thumb.src = data.cover;
           const vUrl = `${_base}${_path}?url=${encodeURIComponent(data.play)}&ext=mp4&filename=Hanter_TK`;
           const aUrl = `${_base}${_path}?url=${encodeURIComponent(data.music)}&ext=mp3&filename=Hanter_TK_Audio`;
-          btnBox.innerHTML = `
-            <a href="${vUrl}" class="save-btn btn-v"><i class="ti ti-download"></i> SAVE VIDEO (HD)</a>
-            <a href="${aUrl}" class="save-btn btn-a"><i class="ti ti-music"></i> SAVE MP3 CORE</a>
-          `;
-        } else if (isYT || isIG) {
-          // MULTI-PLATFORM API FOR YT & IG
-          const res = await fetch(`https://api.vvev.me/api/download?url=${encodeURIComponent(input)}`);
+          btnBox.innerHTML = `<a href="${vUrl}" class="save-btn btn-v"><i class="ti ti-download"></i> SAVE VIDEO (HD)</a><a href="${aUrl}" class="save-btn btn-a"><i class="ti ti-music"></i> SAVE MP3 CORE</a>`;
+        } 
+        else if (isYT || isIG) {
+          // NEW ROBUST MULTI-DOWNLOADER API
+          const res = await fetch(`https://social-downloader-api.vercel.app/api/download?url=${encodeURIComponent(input)}`);
           const data = await res.json();
-          if(!data.url) throw new Error();
-          thumb.src = data.thumbnail || "https://img.freepik.com/free-vector/cyber-security-concept_23-2148532223.jpg";
+          if(!data.play) throw new Error();
           
-          const vUrl = `${_base}${_path}?url=${encodeURIComponent(data.url)}&ext=mp4&filename=Hanter_Extraction`;
-          btnBox.innerHTML = `<a href="${vUrl}" class="save-btn btn-v"><i class="ti ti-download"></i> SAVE MEDIA HD</a>`;
-          if(data.audio) {
-             const aUrl = `${_base}${_path}?url=${encodeURIComponent(data.audio)}&ext=mp3&filename=Hanter_Audio`;
+          thumb.src = data.thumbnail || "https://img.freepik.com/free-vector/cyber-security-concept_23-2148532223.jpg";
+          const vUrl = `${_base}${_path}?url=${encodeURIComponent(data.play)}&ext=mp4&filename=Hanter_Media`;
+          btnBox.innerHTML = `<a href="${vUrl}" class="save-btn btn-v"><i class="ti ti-download"></i> SAVE HD MEDIA</a>`;
+          
+          if(data.music) {
+             const aUrl = `${_base}${_path}?url=${encodeURIComponent(data.music)}&ext=mp3&filename=Hanter_Audio`;
              btnBox.innerHTML += `<a href="${aUrl}" class="save-btn btn-a"><i class="ti ti-music"></i> SAVE MP3 CORE</a>`;
           }
-        } else {
-          // FACEBOOK FALLBACK
+        } 
+        else if (isFB) {
           const res = await fetch(_base + '/api/download', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -252,6 +259,8 @@
           const vTarget = data.hdplay || data.play;
           const vUrl = `${_base}${_path}?url=${encodeURIComponent(vTarget)}&ext=mp4&filename=Hanter_FB`;
           btnBox.innerHTML = `<a href="${vUrl}" class="save-btn btn-v"><i class="ti ti-download"></i> SAVE HD VIDEO</a>`;
+        } else {
+          throw new Error();
         }
 
         setTimeout(() => {
@@ -260,7 +269,7 @@
         }, 500);
 
       } catch (e) {
-        alert("CRITICAL_ERROR: PLATFORM_ENCRYPTION_FAILED");
+        alert("CRITICAL_ERROR: PLATFORM_ENCRYPTION_FAILED\nCheck link and try again.");
         location.reload();
       }
     }
