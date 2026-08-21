@@ -67,17 +67,19 @@ def decrypt_api_nodes():
 FB_BASE_NODE = decrypt_api_nodes()
 
 # ═══════════════════════════
-# INTERFACE BUILDER
+# PREMIUM INTERFACE BUILDER
 # ═══════════════════════════
 def get_main_keyboard(user_id):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    btn_dl = types.KeyboardButton("Start Download")
-    btn_sup = types.KeyboardButton("Support")
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    # Re-adding emojis for the premium look
+    btn_dl = types.KeyboardButton("📥 Start Download")
+    btn_sup = types.KeyboardButton("☎️ Support")
+    markup.row(btn_dl, btn_sup)
+    
     if user_id == ADMIN_ID:
-        btn_adm = types.KeyboardButton("Analytics")
-        markup.add(btn_dl, btn_sup, btn_adm)
-    else:
-        markup.add(btn_dl, btn_sup)
+        btn_adm = types.KeyboardButton("📊 System Analytics")
+        markup.row(btn_adm)
+    
     return markup
 
 def get_support_vault():
@@ -117,7 +119,6 @@ def system_boot(message):
     
     bot.send_message(user_id, welcome_protocol, parse_mode='Markdown', reply_markup=get_main_keyboard(user_id), disable_web_page_preview=True)
     
-    # 🎙️ SEND SYSTEM VOICE PACK (DIRECT BUFFER)
     try:
         audio_stream = requests.get(VOICE_PACK_URL).content
         audio_file = io.BytesIO(audio_stream)
@@ -171,24 +172,18 @@ def central_handler(message):
     elif text.startswith("http"):
         wait_log = bot.send_message(chat_id, "⚡ *Decrypting Media Node...*", parse_mode='Markdown')
         try:
-            # 1. TIKTOK
             if "tiktok.com" in text:
                 res = requests.get(f"https://www.tikwm.com/api/?url={text}").json()
-                data = res['data']
-                caption = f"✅ *TikTok HD Success*\n\n👤 {data['author']['nickname']}\n🔗 [Source Link]({text})"
-                bot.send_video(chat_id, data['play'], caption=caption, parse_mode='Markdown')
+                bot.send_video(chat_id, res['data']['play'], caption="✅ *TikTok HD Success*")
             
-            # 2. YT / IG
             elif any(x in text for x in ["youtube.com", "youtu.be", "instagram.com"]):
                 res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={text}").json()
                 bot.send_video(chat_id, res['play'], caption="✅ *Extraction Successful*")
             
-            # 3. FACEBOOK
             elif any(x in text for x in ["facebook.com", "fb.watch", "fb.gg"]):
                 res = requests.post(f"{FB_BASE_NODE}/api/download", json={"url": text}).json()
                 v_url = res.get('hdplay') or res.get('play')
                 bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*")
-            
             else:
                 bot.send_message(chat_id, "❌ *Protocol Error: Unknown Node.*")
         except:
@@ -203,6 +198,5 @@ if __name__ == "__main__":
     Thread(target=run_server).start()
     print("ULTRA-SAVE PRO SYSTEM: ONLINE")
     
-    # Standard polling to avoid library errors
     bot.remove_webhook()
     bot.infinity_polling()
