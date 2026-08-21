@@ -79,6 +79,16 @@ def get_main_keyboard(user_id):
         markup.row(btn_adm)
     return markup
 
+def get_support_vault():
+    markup = types.InlineKeyboardMarkup(row_width=2)
+    tg = types.InlineKeyboardButton("✈️ Telegram", url="https://t.me/HANTER_XD_OFFICIAL")
+    fb = types.InlineKeyboardButton("👤 Facebook", url="https://www.facebook.com/md.rasel.7.8.2.3.4")
+    wa = types.InlineKeyboardButton("💬 WhatsApp", url="https://wa.me/8801882278234")
+    ig = types.InlineKeyboardButton("📸 Instagram", url="https://instagram.com/mdrasel054281")
+    mail = types.InlineKeyboardButton("📧 Contact Gmail", url="mailto:alexraselchodhury@gmail.com")
+    markup.add(tg, fb, wa, ig, mail)
+    return markup
+
 # ═══════════════════════════
 # MISSION HANDLERS
 # ═══════════════════════════
@@ -149,17 +159,7 @@ def central_handler(message):
         bot.register_next_step_handler(msg, process_extraction)
     
     elif "Support" in text:
-        # 🟢 DIRECT TELEGRAM LINK REDIRECTION
-        markup = types.InlineKeyboardMarkup()
-        tg_link = types.InlineKeyboardButton("🚀 Open Developer Profile", url="https://t.me/HANTER_XD_OFFICIAL")
-        markup.add(tg_link)
-        
-        bot.send_message(
-            chat_id, 
-            "🛡️ *Identity Vault: Secure Support Node*\n\nClick the button below to open a direct encrypted chat with the developer on Telegram.",
-            reply_markup=markup,
-            parse_mode='Markdown'
-        )
+        bot.send_message(chat_id, "🛡️ *Identity Vault Support Node:*", reply_markup=get_support_vault())
     
     elif "Analytics" in text:
         if chat_id == ADMIN_ID:
@@ -170,7 +170,7 @@ def central_handler(message):
         bot.reply_to(message, "❌ *Blocked:* You must click *📥 Start Download* first.", parse_mode='Markdown')
 
 # ═══════════════════════════
-# EXTRACTION ENGINE
+# EXTRACTION ENGINE (FIXED FOR TIKTOK)
 # ═══════════════════════════
 def process_extraction(message):
     url = message.text.strip()
@@ -186,12 +186,17 @@ def process_extraction(message):
 
     wait_log = bot.send_message(chat_id, "⚡ *Decrypting Media Node...*", parse_mode='Markdown')
     try:
-        # 1. TIKTOK
+        # 1. TIKTOK (Optimized logic)
         if "tiktok.com" in url:
             res = requests.get(f"https://www.tikwm.com/api/?url={url}").json()
-            data = res['data']
-            caption = f"✅ *TikTok HD Success*\n\n👤 {data['author']['nickname']}\n🔗 [Source Link]({url})"
-            bot.send_video(chat_id, data['play'], caption=caption, parse_mode='Markdown')
+            if res.get('code') == 0:
+                data = res['data']
+                caption = f"✅ *TikTok Success*\n\n👤 {data['author']['nickname']}\n🔗 [Source Link]({url})"
+                bot.send_video(chat_id, data['play'], caption=caption, parse_mode='Markdown')
+            else:
+                # Fallback to secondary node
+                res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={url}").json()
+                bot.send_video(chat_id, res['play'], caption="✅ *TikTok Success (Node B)*", parse_mode='Markdown')
         
         # 2. YT / IG
         elif any(x in url for x in ["youtube.com", "youtu.be", "instagram.com"]):
@@ -206,7 +211,7 @@ def process_extraction(message):
         else:
             bot.send_message(chat_id, "❌ *Protocol Error: Unknown Node.*")
     except:
-        bot.send_message(chat_id, "⚠️ *Failure:* Content Private or Restricted.")
+        bot.send_message(chat_id, "⚠️ *Failure:* Content is Restricted, Private, or Dead Node.")
     finally:
         bot.delete_message(chat_id, wait_log.message_id)
 
@@ -216,6 +221,5 @@ def process_extraction(message):
 if __name__ == "__main__":
     Thread(target=run_server).start()
     print("ULTRA-SAVE PRO SYSTEM: ONLINE")
-    
     bot.remove_webhook()
     bot.infinity_polling()
