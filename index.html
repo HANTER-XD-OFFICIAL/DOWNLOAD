@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ULTRA-SAVE PRO | HANTER-XD MISSION</title>
+  <title>ULTRA-SAVE PRO | HANTER-XD ELITE</title>
   
   <!-- SYSTEM CONFIG -->
   <!-- MUSIC_SRC: https://raw.githubusercontent.com/HANTER-XD-OFFICIAL/DOWNLOAD/main/bg-music.mp3 -->
@@ -37,46 +37,58 @@
     .hud-panel {
       background: var(--card); backdrop-filter: blur(40px);
       border: 1px solid var(--glow); border-radius: 25px;
-      padding: 35px 25px; position: relative;
+      padding: 35px 25px; position: relative; margin-bottom: 30px;
       box-shadow: 0 0 50px rgba(0,0,0,0.9);
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.5s ease;
     }
 
-    /* INPUT SECTION WRAPPER */
-    #search-unit { transition: 0.5s ease; }
-
+    /* BRAND & LOGO */
     .brand { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
     .vip-logo { width: 60px; height: 60px; border: 2px solid var(--glow); border-radius: 18px; display: flex; align-items: center; justify-content: center; background: #000; box-shadow: 0 0 20px var(--brd); }
 
+    /* INPUT UNIT */
     .input-unit { position: relative; background: rgba(0,0,0,0.8); border: 1px solid var(--brd); border-radius: 15px; margin-bottom: 20px; }
-    .url-input { width: 100%; background: transparent; border: none; padding: 20px 15px 20px 50px; color: #fff; font-family: 'Share Tech Mono'; outline: none; font-size: 0.9rem; }
+    .url-input { width: 100%; background: transparent; border: none; padding: 20px 15px 20px 50px; color: #fff; font-family: 'Share Tech Mono'; outline: none; }
     .input-unit i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--glow); font-size: 1.3rem; }
 
     .action-btn { width: 100%; padding: 20px; border-radius: 15px; background: var(--glow); border: none; font-family: 'Orbitron'; font-weight: 900; color: #000; cursor: pointer; transition: 0.4s; letter-spacing: 2px; text-transform: uppercase; }
 
-    /* RESULTS HUD - Hidden Initially */
+    /* SUPPORTED NODES SECTION */
+    .node-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 25px; }
+    .node-item { 
+      display: flex; align-items: center; justify-content: space-between; 
+      background: rgba(255,255,255,0.03); border: 1px solid var(--brd); 
+      padding: 15px; border-radius: 12px; transition: 0.3s;
+    }
+    .node-info { display: flex; align-items: center; gap: 12px; }
+    .node-info i { font-size: 1.4rem; color: var(--glow); }
+    .node-info span { font-family: 'Orbitron'; font-size: 0.75rem; letter-spacing: 1px; }
+    
+    .status-badge { font-family: 'Share Tech Mono'; font-size: 0.55rem; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+    .status-live { background: var(--glow); color: #000; box-shadow: 0 0 10px var(--glow); }
+    .status-soon { background: #333; color: #666; }
+
+    /* RESULTS VIEW */
     #result-hud { display: none; text-align: center; animation: zoomIn 0.6s ease forwards; }
     @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-
     .preview-box { width: 100%; border-radius: 20px; border: 2px solid var(--glow); margin-bottom: 20px; box-shadow: 0 0 30px var(--brd); }
     
     .save-btn { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; border-radius: 15px; text-decoration: none; font-family: 'Orbitron'; font-weight: 900; font-size: 0.85rem; margin-bottom: 12px; transition: 0.3s; }
     .btn-v { background: var(--glow); color: #000; }
     .btn-a { background: rgba(0,0,0,0.6); color: var(--glow); border: 1px solid var(--glow); }
+    .reset-link { display: inline-block; margin-top: 20px; font-family: 'Share Tech Mono'; color: #666; cursor: pointer; text-decoration: underline; font-size: 0.7rem; }
 
-    .reset-link { display: inline-block; margin-top: 20px; font-family: 'Share Tech Mono'; color: #666; cursor: pointer; font-size: 0.7rem; text-decoration: underline; letter-spacing: 1px; }
-
-    /* CONTACT SECTION */
-    #contact-unit { margin-top: 30px; }
-    .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .social-item { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--brd); padding: 12px; border-radius: 12px; text-decoration: none; color: #fff; font-family: 'Share Tech Mono'; font-size: 0.75rem; transition: 0.3s; }
-    .social-item:hover { background: var(--glow); color: #000; }
+    /* SUPPORT SECTION */
+    .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+    .social-btn { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--brd); padding: 12px; border-radius: 12px; text-decoration: none; color: #fff; font-family: 'Share Tech Mono'; font-size: 0.7rem; }
+    .social-btn:hover { background: var(--glow); color: #000; }
 
     /* AUDIO HUD */
     #audio-hud { position: fixed; bottom: 85px; left: 15px; right: 15px; background: rgba(2, 2, 5, 0.98); border: 1px solid var(--glow); border-radius: 60px; padding: 12px 20px; display: flex; align-items: center; gap: 15px; backdrop-filter: blur(25px); z-index: 1000; transition: 0.5s ease; }
+    .audio-play { background: var(--glow); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
     .navbar { position: fixed; bottom: 0; left: 0; right: 0; background: #000; border-top: 1px solid var(--glow); display: flex; justify-content: space-around; padding: 15px; z-index: 1000; }
-    .nav-icon { color: #333; font-size: 1.5rem; transition: 0.3s; cursor: pointer; }
+    .nav-icon { color: #333; font-size: 1.5rem; cursor: pointer; }
     .nav-icon.active { color: var(--glow); text-shadow: 0 0 15px var(--glow); }
 
   </style>
@@ -88,8 +100,8 @@
 
   <div class="container">
     
-    <div class="hud-panel">
-      <!-- SEARCH SECTION (Will Hide) -->
+    <div class="hud-panel" id="main-interface">
+      <!-- INPUT SECTION (Will Hide) -->
       <div id="search-unit">
         <div class="brand">
           <div class="vip-logo">
@@ -99,64 +111,85 @@
           </div>
           <div class="brand-text">
             <h1 style="font-family:'Orbitron'">HANTER-XD</h1>
-            <div style="font-family:'Share Tech Mono'; font-size:0.6rem; color:var(--glow);">STATUS: SYSTEM_READY</div>
+            <div style="font-family:'Share Tech Mono'; font-size:0.6rem; color:var(--glow);">CORE_DECRYPTION: READY</div>
           </div>
         </div>
 
         <div class="input-unit">
-          <i class="ti ti-access-point"></i>
-          <input type="text" id="url" class="url-input" placeholder="Paste Remote Link...">
+          <i class="ti ti-link"></i>
+          <input type="text" id="url" class="url-input" placeholder="Paste Video Link Here...">
         </div>
 
-        <button class="action-btn" id="run-btn" onclick="initiateMission()">Initiate Extraction</button>
+        <button class="action-btn" id="run-btn" onclick="startMission()">Execute Protocol</button>
+
+        <!-- SUPPORTED NODES GRID -->
+        <div id="nodes-unit">
+          <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--glow); margin-top:25px; letter-spacing:2px;">SUPPORTED_NODES.EXE</div>
+          <div class="node-grid">
+            <div class="node-item">
+              <div class="node-info"><i class="ti ti-brand-tiktok"></i> <span>TIKTOK</span></div>
+              <div class="status-badge status-live">ONLINE_LIVE</div>
+            </div>
+            <div class="node-item">
+              <div class="node-info"><i class="ti ti-brand-facebook"></i> <span>FACEBOOK</span></div>
+              <div class="status-badge status-live">ONLINE_LIVE</div>
+            </div>
+            <div class="node-item" style="opacity:0.4;">
+              <div class="node-info"><i class="ti ti-brand-instagram"></i> <span>INSTAGRAM</span></div>
+              <div class="status-badge status-soon">COMING_SOON</div>
+            </div>
+            <div class="node-item" style="opacity:0.4;">
+              <div class="node-info"><i class="ti ti-brand-youtube"></i> <span>YOUTUBE</span></div>
+              <div class="status-badge status-soon">COMING_SOON</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- RESULTS SECTION (Will Show) -->
       <div id="result-hud">
-        <div style="font-family:'Share Tech Mono'; color:var(--glow); font-size:0.7rem; margin-bottom:15px;">// EXTRACTION_SUCCESSFUL: DATA_DECRYPTED</div>
+        <div style="font-family:'Share Tech Mono'; color:var(--glow); font-size:0.7rem; margin-bottom:15px;">// EXTRACTION_SUCCESS: LINKS_DECRYPTED</div>
         <img id="thumb" class="preview-box" src="">
         <div id="btn-box"></div>
-        <span class="reset-link" onclick="location.reload()">[ RESET SYSTEM ]</span>
+        <span class="reset-link" onclick="location.reload()">[ REBOOT_CORE ]</span>
       </div>
     </div>
 
-    <!-- SUPPORT SECTION -->
-    <div class="hud-panel" id="contact-unit">
-      <div style="font-family:'Orbitron'; font-size:0.8rem; color:var(--glow); margin-bottom:20px; letter-spacing:2px;">SUPPORT_IDENTITY.LOG</div>
+    <!-- SUPPORT UNIT -->
+    <div class="hud-panel" id="support">
+      <div style="font-family:'Orbitron'; font-size:0.8rem; color:var(--glow); margin-bottom:20px; letter-spacing:2px;">CONTACT_IDENTITY.LOG</div>
       <div class="social-grid">
-        <a href="https://wa.me/8801882278234" class="social-item" target="_blank"><i class="ti ti-brand-whatsapp"></i> WHATSAPP</a>
-        <a href="https://t.me/HANTER_XD_OFFICIAL" class="social-item" target="_blank"><i class="ti ti-brand-telegram"></i> TELEGRAM</a>
+        <a href="https://wa.me/8801882278234" class="social-btn" target="_blank"><i class="ti ti-brand-whatsapp"></i> WHATSAPP</a>
+        <a href="https://t.me/HANTER_XD_OFFICIAL" class="social-btn" target="_blank"><i class="ti ti-brand-telegram"></i> TELEGRAM</a>
       </div>
       <div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:12px; margin-top:15px; border:1px dashed var(--brd);">
-        <p style="font-size:0.75rem; color:#888; line-height:1.4;"><i class="ti ti-map-pin" style="color:var(--glow)"></i> TALGHARIA, JAFARPUR(5940), AKKELPUR, JOYPURHAT</p>
+        <p style="font-size:0.7rem; color:#888; line-height:1.4;"><i class="ti ti-map-pin" style="color:var(--glow)"></i> TALGHARIA, JAFARPUR(5940), JOYPURHAT</p>
       </div>
     </div>
 
   </div>
 
-  <!-- AUDIO HUD (Will Hide on Search) -->
+  <!-- VOICE HUD -->
   <div id="audio-hud">
     <div style="width:4px; height:20px; background:var(--glow); border-radius:10px; animation: pulse 1s infinite;"></div>
     <div style="flex:1">
-      <div style="font-family:'Orbitron'; font-size:0.5rem; color:var(--glow);">ELITE_VOICE_CORE</div>
-      <div style="font-size:0.6rem; color:#444; font-family:'Share Tech Mono';">Secure Stream: Active</div>
+      <div style="font-family:'Orbitron'; font-size:0.5rem; color:var(--glow);">ELITE_VOICE_STREAM</div>
+      <div style="font-size:0.6rem; color:#444; font-family:'Share Tech Mono';">Secure Audio: [LIVE]</div>
     </div>
-    <button onclick="toggleAudio()" style="background:var(--glow); border:none; width:35px; height:35px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+    <button onclick="toggleAudio()" class="audio-play">
       <i class="ti ti-player-play" id="audio-ico" style="color:#000; font-size:1.2rem;"></i>
     </button>
   </div>
 
-  <!-- NAVIGATION -->
+  <!-- NAV -->
   <nav class="navbar">
     <i class="ti ti-home-bolt nav-icon active"></i>
-    <i class="ti ti-user-shield nav-icon" onclick="location.href='#contact-unit'"></i>
+    <i class="ti ti-user-check nav-icon" onclick="location.href='#support'"></i>
     <i class="ti ti-settings nav-icon"></i>
   </nav>
 
   <script>
-    // ═══════════════════════════
     // CORE ENGINE (FFX 1.0)
-    // ═══════════════════════════
     (function () {
       const _k = 0x5A;
       const _d = function (arr) { return arr.filter(x => x !== _k).map(x => String.fromCharCode(x ^ _k)).join(''); };
@@ -174,11 +207,9 @@
       isPlaying = !isPlaying;
     }
 
-    // MISSION INITIATION
-    async function initiateMission() {
+    async function startMission() {
       const input = document.getElementById('url').value.trim();
       const btn = document.getElementById('run-btn');
-      
       const searchUnit = document.getElementById('search-unit');
       const resultHud = document.getElementById('result-hud');
       const audioHud = document.getElementById('audio-hud');
@@ -187,31 +218,26 @@
 
       if(!input) return;
 
-      // 1. TERMINATE AUDIO & HIDE PLAYER
+      // HIDE SEARCH, NODES & TERMINATE AUDIO
       audio.pause();
-      audio.currentTime = 0;
       audioHud.style.opacity = "0";
       setTimeout(() => { audioHud.style.display = "none"; }, 500);
-
-      // 2. HIDE SEARCH COMPONENTS
       searchUnit.style.opacity = "0";
-      btn.innerText = "BYPASSING SECURITY...";
-      btn.disabled = true;
+      btn.innerText = "ENCRYPTING DATA...";
 
       try {
         const isTK = /tiktok\.com/i.test(input);
         const _base = window.__fbBase;
         const _path = window.__fbPath;
         
-        let data;
         if(isTK) {
           const res = await fetch("https://www.tikwm.com/api/?url=" + encodeURIComponent(input));
-          data = (await res.json()).data;
+          const data = (await res.json()).data;
           thumb.src = data.cover;
           const vUrl = `${_base}${_path}?url=${encodeURIComponent(data.play)}&ext=mp4&filename=Hanter_TK`;
           const aUrl = `${_base}${_path}?url=${encodeURIComponent(data.music)}&ext=mp3&filename=Hanter_TK_Audio`;
           btnBox.innerHTML = `
-            <a href="${vUrl}" class="save-btn btn-v"><i class="ti ti-download"></i> SAVE VIDEO HD</a>
+            <a href="${vUrl}" class="save-btn btn-v"><i class="ti ti-download"></i> SAVE VIDEO (HD)</a>
             <a href="${aUrl}" class="save-btn btn-a"><i class="ti ti-music"></i> SAVE MP3 CORE</a>
           `;
         } else {
@@ -220,7 +246,7 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: input })
           });
-          data = await res.json();
+          const data = await res.json();
           thumb.src = data.cover || "https://img.freepik.com/free-vector/cyber-security-concept_23-2148532223.jpg";
           const vTarget = data.hdplay || data.play;
           const aTarget = data.music || data.audio;
@@ -232,14 +258,13 @@
           }
         }
 
-        // 3. SHOW RESULTS & FINAL HIDE
         setTimeout(() => {
           searchUnit.style.display = "none";
           resultHud.style.display = "block";
         }, 500);
 
       } catch (e) {
-        alert("CRITICAL ERROR: SOURCE REJECTED");
+        alert("CRITICAL_ERROR: SOURCE_BLOCKED");
         location.reload();
       }
     }
