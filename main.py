@@ -16,7 +16,7 @@ def home(): return "🛡️ ULTRA-SAVE PRO CORE ENGINE: OPERATIONAL"
 def run_server(): app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 # SYSTEM IDENTITY & SECURITY
-TOKEN = "8523953940:AAHJqzNbyPWK-aVEuotVks03kWJCCiloogo"
+TOKEN = "8523953940:AAGzJRfKPepZypt320Wee-VReY_2KqOeYyM"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
 
@@ -104,7 +104,7 @@ def welcome(message):
                     f"✨ Assalamu Alaikum, {first_name}!\n\n"
                     f"Welcome to the elite media downloader. Keep your Salah on time. "
                     f"Success is only from Allah. Use the menu buttons below.\n\n"
-                    f"👤 Architect: [HANTER-XD](https://t.me/HANTER_XD_OFFICIAL)")
+                    f"👤 Architect: [HANTER-XD OFFICIAL](https://t.me/HANTER_XD_OFFICIAL)")
     
     bot.send_message(user_id, welcome_text, parse_mode='Markdown', reply_markup=get_main_menu(user_id), disable_web_page_preview=True)
     
