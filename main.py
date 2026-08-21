@@ -80,7 +80,7 @@ def get_support_inline():
     return markup
 
 # ═══════════════════════════
-# FIREWALL & HANDLERS
+# SECURITY & HANDLERS
 # ═══════════════════════════
 def is_authorized(user_id):
     blacklist = load_db(BAN_DB)
@@ -100,11 +100,11 @@ def system_start(message):
         f"🛡️ *ULTRA-SAVE PRO | CORE V2.5*\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
         f"✨ *Assalamu Alaikum, {first_name}!*\n\n"
-        f"Welcome to the elite media extraction engine. Remember to perform "
-        f"your Salah on time and stay righteous. Success is only from Allah.\n\n"
+        f"Welcome to the elite media extraction engine. Stay righteous and "
+        f"perform your Salah. Success is only from Allah.\n\n"
         f"👤 *Architect:* [HANTER-XD](https://t.me/HANTER_XD_OFFICIAL)\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
-        f"⚠️ *Instruction:* Use the menu bar below to interact."
+        f"⚠️ *Instruction:* Use the bottom menu bar to interact with the core."
     )
     
     bot.send_message(user_id, welcome_text, parse_mode='Markdown', reply_markup=get_main_menu(user_id), disable_web_page_preview=True)
@@ -115,17 +115,15 @@ def system_start(message):
         bot.send_message(ADMIN_ID, f"🔔 *NEW ACCESS DETECTED:* {first_name} (ID: `{user_id}`)")
 
 # ═══════════════════════════
-# ADMIN CONTROL NODE
+# ADMIN PANEL COMMANDS
 # ═══════════════════════════
 @bot.message_handler(commands=['ban'])
 def ban_protocol(message):
     if message.chat.id == ADMIN_ID:
         try:
             target = int(message.text.split()[1])
-            bl = load_db(BAN_DB)
-            if target not in bl:
-                bl.append(target); save_db(BAN_DB, bl)
-                bot.reply_to(message, f"✅ User `{target}` blacklisted.")
+            bl = load_db(BAN_DB); bl.append(target); save_db(BAN_DB, bl)
+            bot.reply_to(message, f"✅ User `{target}` blacklisted.")
         except: bot.reply_to(message, "Usage: `/ban [ID]`")
 
 @bot.message_handler(commands=['unblock'])
@@ -140,7 +138,7 @@ def unblock_protocol(message):
         except: bot.reply_to(message, "Usage: `/unblock [ID]`")
 
 # ═══════════════════════════
-# MENU & EXTRACTION LOGIC
+# MENU LOGIC - FIXED RECOGNITION
 # ═══════════════════════════
 @bot.message_handler(func=lambda message: True)
 def menu_handler(message):
@@ -148,20 +146,21 @@ def menu_handler(message):
     if not is_authorized(chat_id): return
     text = message.text
 
-    if text == "📥 Start Download":
+    # Optimized string matching for emojis
+    if "Start Download" in text:
         msg = bot.send_message(chat_id, "✅ *Protocol Ready!*\n\nPlease paste your video link now:", parse_mode='Markdown')
         bot.register_next_step_handler(msg, process_extraction)
 
-    elif text == "☎️ Support":
-        bot.send_message(chat_id, "🛡️ *Identity Vault: Support Node*\n\nSelect a gateway:", reply_markup=get_support_inline())
+    elif "Support" in text:
+        bot.send_message(chat_id, "🛡️ *Identity Vault: Support Node*\n\nSelect a communication gateway below:", reply_markup=get_support_inline())
 
-    elif text == "📊 System Analytics":
+    elif "System Analytics" in text:
         if chat_id == ADMIN_ID:
             users = load_db(USER_DB)
             bot.send_message(ADMIN_ID, f"📊 *LIVE ANALYTICS*\n━━━━━━━━━━━━━━\n👥 Total Users: `{len(users)}`", parse_mode='Markdown')
 
     elif text.startswith("http"):
-        bot.reply_to(message, "❌ *Blocked:* You must click *📥 Start Download* first.", parse_mode='Markdown')
+        bot.reply_to(message, "❌ *Blocked:* Click *📥 Start Download* in the menu first.", parse_mode='Markdown')
 
 # ═══════════════════════════
 # MEDIA EXTRACTION ENGINE
@@ -171,24 +170,21 @@ def process_extraction(message):
     chat_id = message.chat.id
     if not is_authorized(chat_id): return
     if not url.startswith("http"):
-        bot.send_message(chat_id, "❌ *Error:* Invalid Link. Extraction Terminated.")
+        bot.send_message(chat_id, "❌ *Error:* Invalid Link format.")
         return
 
     wait = bot.send_message(chat_id, "⚡ *Decrypting Stream Protocol...*", parse_mode='Markdown')
     try:
-        # 1. TIKTOK
         if "tiktok.com" in url:
             res = requests.get(f"https://www.tikwm.com/api/?url={url}").json()
             d = res['data']
-            cap = f"✅ *TikTok HD Success*\n\n📝 {d.get('title','No Title')}\n👤 {d['author']['nickname']}\n🔗 [Source]({url})"
+            cap = f"✅ *TikTok Success*\n\n👤 {d['author']['nickname']}\n🔗 [Source]({url})"
             bot.send_video(chat_id, d['play'], caption=cap, parse_mode='Markdown')
 
-        # 2. YT / IG
         elif any(x in url for x in ["youtube.com", "youtu.be", "instagram.com"]):
             res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={url}").json()
             bot.send_video(chat_id, res['play'], caption="✅ *Extraction Successful*", parse_mode='Markdown')
 
-        # 3. FACEBOOK
         elif any(x in url for x in ["facebook.com", "fb.watch", "fb.gg"]):
             res = requests.post(f"{FB_BASE_NODE}/api/download", json={"url": url}).json()
             v_url = res.get('hdplay') or res.get('play')
@@ -200,7 +196,7 @@ def process_extraction(message):
     finally:
         bot.delete_message(chat_id, wait.message_id)
 
-# START SYSTEM
+# START
 if __name__ == "__main__":
     Thread(target=run_server).start()
     print("ULTRA-SAVE PRO SYSTEM: ONLINE")
