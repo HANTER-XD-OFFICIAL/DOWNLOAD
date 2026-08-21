@@ -79,17 +79,6 @@ def get_main_keyboard(user_id):
         markup.row(btn_adm)
     return markup
 
-def get_support_vault():
-    markup = types.InlineKeyboardMarkup(row_width=2)
-    # 🟢 DIRECT TELEGRAM LINK ADDED BELOW
-    tg = types.InlineKeyboardButton("✈️ Telegram", url="https://t.me/HANTER_XD_OFFICIAL")
-    fb = types.InlineKeyboardButton("👤 Facebook", url="https://www.facebook.com/md.rasel.7.8.2.3.4")
-    wa = types.InlineKeyboardButton("💬 WhatsApp", url="https://wa.me/8801882278234")
-    ig = types.InlineKeyboardButton("📸 Instagram", url="https://instagram.com/mdrasel054281")
-    mail = types.InlineKeyboardButton("📧 Contact Gmail", url="mailto:alexraselchodhury@gmail.com")
-    markup.add(tg, fb, wa, ig, mail)
-    return markup
-
 # ═══════════════════════════
 # MISSION HANDLERS
 # ═══════════════════════════
@@ -160,7 +149,17 @@ def central_handler(message):
         bot.register_next_step_handler(msg, process_extraction)
     
     elif "Support" in text:
-        bot.send_message(chat_id, "🛡️ *Identity Vault Support Node:*", reply_markup=get_support_vault())
+        # 🟢 DIRECT TELEGRAM LINK REDIRECTION
+        markup = types.InlineKeyboardMarkup()
+        tg_link = types.InlineKeyboardButton("🚀 Open Developer Profile", url="https://t.me/HANTER_XD_OFFICIAL")
+        markup.add(tg_link)
+        
+        bot.send_message(
+            chat_id, 
+            "🛡️ *Identity Vault: Secure Support Node*\n\nClick the button below to open a direct encrypted chat with the developer on Telegram.",
+            reply_markup=markup,
+            parse_mode='Markdown'
+        )
     
     elif "Analytics" in text:
         if chat_id == ADMIN_ID:
@@ -168,7 +167,7 @@ def central_handler(message):
             bot.send_message(ADMIN_ID, f"📊 *LIVE ANALYTICS*\n━━━━━━━━━━━━━━\n👥 Total Users: `{count}`", parse_mode='Markdown')
 
     elif text.startswith("http"):
-        bot.reply_to(message, "❌ *Blocked:* You must click *📥 Start Download* in the menu first.", parse_mode='Markdown')
+        bot.reply_to(message, "❌ *Blocked:* You must click *📥 Start Download* first.", parse_mode='Markdown')
 
 # ═══════════════════════════
 # EXTRACTION ENGINE
@@ -177,7 +176,6 @@ def process_extraction(message):
     url = message.text.strip()
     chat_id = message.chat.id
     
-    # If menu buttons are clicked instead of a link
     if "Support" in url or "Start Download" in url or "Analytics" in url:
         central_handler(message)
         return
@@ -203,7 +201,7 @@ def process_extraction(message):
         # 3. FACEBOOK
         elif any(x in url for x in ["facebook.com", "fb.watch", "fb.gg"]):
             res = requests.post(f"{FB_BASE_NODE}/api/download", json={"url": url}).json()
-            v_url = response.get('hdplay') or response.get('play')
+            v_url = res.get('hdplay') or res.get('play')
             bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*", parse_mode='Markdown')
         else:
             bot.send_message(chat_id, "❌ *Protocol Error: Unknown Node.*")
