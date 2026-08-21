@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ULTRA-SAVE PRO | HANTER-XD DEV</title>
+  <title>ULTRA-SAVE PRO | HANTER-XD MISSION</title>
   
   <!-- SYSTEM CONFIG -->
   <!-- MUSIC_SRC: https://raw.githubusercontent.com/HANTER-XD-OFFICIAL/DOWNLOAD/main/bg-music.mp3 -->
@@ -13,163 +13,150 @@
   
   <style>
     :root {
-      --glow: #00fff2;
-      --accent: #ff0055;
-      --bg: #050505;
-      --card: rgba(10, 10, 15, 0.85);
-      --brd: rgba(0, 255, 242, 0.25);
+      --bg: #010103;
+      --card: rgba(6, 6, 10, 0.95);
+      --glow: #00fff2; 
+      --brd: rgba(0, 255, 242, 0.3);
+    }
+
+    @keyframes colorShift {
+      0% { --glow: #00fff2; }
+      33% { --glow: #ff007b; }
+      66% { --glow: #37ff00; }
+      100% { --glow: #00fff2; }
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
-    body { background: var(--bg); color: #fff; font-family: 'Rajdhani', sans-serif; overflow-x: hidden; min-height: 100vh; }
+    body { background: var(--bg); color: #fff; font-family: 'Rajdhani', sans-serif; animation: colorShift 6s infinite linear; overflow-x: hidden; min-height: 100vh; }
 
-    /* BACKGROUND GRID */
-    .grid-bg {
-      position: fixed; inset: 0;
-      background-image: linear-gradient(var(--brd) 1px, transparent 1px), linear-gradient(90deg, var(--brd) 1px, transparent 1px);
-      background-size: 45px 45px; opacity: 0.2; z-index: -1;
-    }
+    .star-bg { position: fixed; inset: 0; background: radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)), radial-gradient(1px 1px at 50px 160px, var(--glow), rgba(0,0,0,0)); background-size: 200px 200px; z-index: -1; opacity: 0.2; }
+    .scanline { position: fixed; inset: 0; height: 100vh; background: linear-gradient(transparent 50%, rgba(0,0,0,0.1) 50%); background-size: 100% 4px; pointer-events: none; z-index: 100; }
 
-    .container { max-width: 460px; margin: 30px auto; padding: 0 20px 150px; }
+    .container { max-width: 460px; margin: 40px auto; padding: 0 20px 150px; }
 
-    /* GLASS HUD PANEL */
     .hud-panel {
-      background: var(--card); backdrop-filter: blur(25px);
-      border: 1px solid var(--brd); border-radius: 20px;
-      padding: 30px; position: relative; margin-bottom: 30px;
-      box-shadow: 0 0 40px rgba(0, 255, 242, 0.1);
+      background: var(--card); backdrop-filter: blur(40px);
+      border: 1px solid var(--glow); border-radius: 25px;
+      padding: 35px 25px; position: relative;
+      box-shadow: 0 0 50px rgba(0,0,0,0.9);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .hud-panel::before { content: ''; position: absolute; top: 10px; left: 10px; width: 15px; height: 15px; border-left: 2px solid var(--glow); border-top: 2px solid var(--glow); }
-    .hud-panel::after { content: ''; position: absolute; bottom: 10px; right: 10px; width: 15px; height: 15px; border-right: 2px solid var(--glow); border-bottom: 2px solid var(--glow); }
 
-    /* HEADER */
-    .brand { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
-    .vip-logo { width: 55px; height: 55px; background: rgba(0, 255, 242, 0.1); border: 2px solid var(--glow); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--brd); }
+    /* INPUT SECTION WRAPPER */
+    #search-unit { transition: 0.5s ease; }
 
-    /* INPUT UNIT */
-    .terminal-input { position: relative; background: rgba(0,0,0,0.5); border: 1px solid var(--brd); border-radius: 12px; margin-bottom: 20px; }
-    .url-input { width: 100%; background: transparent; border: none; padding: 15px 15px 15px 45px; color: #fff; font-family: 'Share Tech Mono'; outline: none; }
-    .terminal-input i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--glow); }
+    .brand { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+    .vip-logo { width: 60px; height: 60px; border: 2px solid var(--glow); border-radius: 18px; display: flex; align-items: center; justify-content: center; background: #000; box-shadow: 0 0 20px var(--brd); }
 
-    .execute-btn { width: 100%; padding: 18px; border-radius: 12px; background: var(--glow); border: none; font-family: 'Orbitron'; font-weight: 900; color: #000; cursor: pointer; transition: 0.4s; letter-spacing: 2px; }
-    .execute-btn:hover { box-shadow: 0 0 25px var(--glow); transform: scale(1.02); }
+    .input-unit { position: relative; background: rgba(0,0,0,0.8); border: 1px solid var(--brd); border-radius: 15px; margin-bottom: 20px; }
+    .url-input { width: 100%; background: transparent; border: none; padding: 20px 15px 20px 50px; color: #fff; font-family: 'Share Tech Mono'; outline: none; font-size: 0.9rem; }
+    .input-unit i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--glow); font-size: 1.3rem; }
 
-    /* CONTACT SECTION DESIGN */
-    .section-title { font-family: 'Orbitron'; font-size: 0.9rem; letter-spacing: 2px; color: var(--glow); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--brd); }
+    .action-btn { width: 100%; padding: 20px; border-radius: 15px; background: var(--glow); border: none; font-family: 'Orbitron'; font-weight: 900; color: #000; cursor: pointer; transition: 0.4s; letter-spacing: 2px; text-transform: uppercase; }
 
-    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .contact-item { 
-      display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); 
-      border: 1px solid var(--brd); padding: 12px; border-radius: 10px; 
-      text-decoration: none; color: #fff; transition: 0.3s;
-    }
-    .contact-item:hover { background: var(--brd); border-color: var(--glow); transform: translateY(-3px); }
-    .contact-item i { font-size: 1.3rem; color: var(--glow); }
-    .contact-item span { font-family: 'Share Tech Mono'; font-size: 0.75rem; }
+    /* RESULTS HUD - Hidden Initially */
+    #result-hud { display: none; text-align: center; animation: zoomIn 0.6s ease forwards; }
+    @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 
-    .info-box { background: rgba(0,0,0,0.4); border-left: 3px solid var(--glow); padding: 15px; margin-top: 15px; border-radius: 0 10px 10px 0; }
-    .info-box p { font-size: 0.8rem; color: #aaa; line-height: 1.6; margin-bottom: 5px; }
-    .info-box i { color: var(--glow); margin-right: 8px; }
+    .preview-box { width: 100%; border-radius: 20px; border: 2px solid var(--glow); margin-bottom: 20px; box-shadow: 0 0 30px var(--brd); }
+    
+    .save-btn { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; border-radius: 15px; text-decoration: none; font-family: 'Orbitron'; font-weight: 900; font-size: 0.85rem; margin-bottom: 12px; transition: 0.3s; }
+    .btn-v { background: var(--glow); color: #000; }
+    .btn-a { background: rgba(0,0,0,0.6); color: var(--glow); border: 1px solid var(--glow); }
 
-    /* RESULTS HUD */
-    #result-hud { display: none; margin-top: 25px; animation: slideUp 0.5s ease; }
-    .preview-frame { width: 100%; border-radius: 15px; border: 1px solid var(--brd); margin-bottom: 15px; }
-    .dl-action { display: flex; align-items: center; gap: 12px; background: var(--glow); padding: 16px; border-radius: 12px; color: #000; text-decoration: none; font-weight: 900; font-family: 'Orbitron'; font-size: 0.8rem; justify-content: center; box-shadow: 0 10px 20px rgba(0,255,242,0.2); }
+    .reset-link { display: inline-block; margin-top: 20px; font-family: 'Share Tech Mono'; color: #666; cursor: pointer; font-size: 0.7rem; text-decoration: underline; letter-spacing: 1px; }
 
-    /* MUSIC PLAYER HUD */
-    .music-hud { position: fixed; bottom: 85px; left: 15px; right: 15px; background: rgba(5, 5, 10, 0.95); border: 1px solid var(--brd); border-radius: 50px; padding: 12px 20px; display: flex; align-items: center; gap: 15px; backdrop-filter: blur(20px); z-index: 1000; }
-    .m-btn { background: var(--glow); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    /* CONTACT SECTION */
+    #contact-unit { margin-top: 30px; }
+    .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .social-item { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--brd); padding: 12px; border-radius: 12px; text-decoration: none; color: #fff; font-family: 'Share Tech Mono'; font-size: 0.75rem; transition: 0.3s; }
+    .social-item:hover { background: var(--glow); color: #000; }
 
-    /* BOTTOM NAV */
-    .bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #000; border-top: 1px solid var(--brd); display: flex; justify-content: space-around; padding: 15px; z-index: 1000; }
-    .bnav-item { color: #555; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
-    .bnav-item.active { color: var(--glow); text-shadow: 0 0 10px var(--glow); }
+    /* AUDIO HUD */
+    #audio-hud { position: fixed; bottom: 85px; left: 15px; right: 15px; background: rgba(2, 2, 5, 0.98); border: 1px solid var(--glow); border-radius: 60px; padding: 12px 20px; display: flex; align-items: center; gap: 15px; backdrop-filter: blur(25px); z-index: 1000; transition: 0.5s ease; }
+
+    .navbar { position: fixed; bottom: 0; left: 0; right: 0; background: #000; border-top: 1px solid var(--glow); display: flex; justify-content: space-around; padding: 15px; z-index: 1000; }
+    .nav-icon { color: #333; font-size: 1.5rem; transition: 0.3s; cursor: pointer; }
+    .nav-icon.active { color: var(--glow); text-shadow: 0 0 15px var(--glow); }
 
   </style>
 </head>
 <body>
 
-  <div class="grid-bg"></div>
+  <div class="star-bg"></div>
+  <div class="scanline"></div>
 
   <div class="container">
     
-    <!-- DOWNLOADDER SECTION -->
-    <div class="hud-panel" id="home">
-      <div class="brand">
-        <div class="vip-logo">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#00fff2" stroke-width="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v8M9 13l3 3 3-3"/>
-          </svg>
+    <div class="hud-panel">
+      <!-- SEARCH SECTION (Will Hide) -->
+      <div id="search-unit">
+        <div class="brand">
+          <div class="vip-logo">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v8M9 13l3 3 3-3"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h1 style="font-family:'Orbitron'">HANTER-XD</h1>
+            <div style="font-family:'Share Tech Mono'; font-size:0.6rem; color:var(--glow);">STATUS: SYSTEM_READY</div>
+          </div>
         </div>
-        <div class="brand-text">
-          <h1 style="font-family:'Orbitron'">HANTER-XD</h1>
-          <div style="font-family:'Share Tech Mono'; font-size:0.6rem; color:var(--glow);">SYSTEM_V2.5: OPERATIONAL</div>
+
+        <div class="input-unit">
+          <i class="ti ti-access-point"></i>
+          <input type="text" id="url" class="url-input" placeholder="Paste Remote Link...">
         </div>
+
+        <button class="action-btn" id="run-btn" onclick="initiateMission()">Initiate Extraction</button>
       </div>
 
-      <div class="terminal-input">
-        <i class="ti ti-terminal-2"></i>
-        <input type="text" id="url" class="url-input" placeholder="Paste Video Link Here...">
-      </div>
-
-      <button class="execute-btn" id="run-btn" onclick="runExtraction()">EXTRACT DATA</button>
-
-      <!-- RESULTS HUD -->
+      <!-- RESULTS SECTION (Will Show) -->
       <div id="result-hud">
-        <img id="preview" class="preview-frame" src="">
-        <div id="action-panel"></div>
+        <div style="font-family:'Share Tech Mono'; color:var(--glow); font-size:0.7rem; margin-bottom:15px;">// EXTRACTION_SUCCESSFUL: DATA_DECRYPTED</div>
+        <img id="thumb" class="preview-box" src="">
+        <div id="btn-box"></div>
+        <span class="reset-link" onclick="location.reload()">[ RESET SYSTEM ]</span>
       </div>
     </div>
 
-    <!-- CONTACT SUPPORT SECTION -->
-    <div class="hud-panel" id="support">
-      <div class="section-title">CONTACT_SUPPORT.EXE</div>
-      
-      <div class="contact-grid">
-        <a href="https://www.facebook.com/md.rasel.7.8.2.3.4" class="contact-item" target="_blank">
-          <i class="ti ti-brand-facebook"></i> <span>FACEBOOK</span>
-        </a>
-        <a href="https://wa.me/8801882278234" class="contact-item" target="_blank">
-          <i class="ti ti-brand-whatsapp"></i> <span>WHATSAPP</span>
-        </a>
-        <a href="https://t.me/HANTER_XD_OFFICIAL" class="contact-item" target="_blank">
-          <i class="ti ti-brand-telegram"></i> <span>TELEGRAM</span>
-        </a>
-        <a href="https://instagram.com/mdrasel054281" class="contact-item" target="_blank">
-          <i class="ti ti-brand-instagram"></i> <span>INSTAGRAM</span>
-        </a>
+    <!-- SUPPORT SECTION -->
+    <div class="hud-panel" id="contact-unit">
+      <div style="font-family:'Orbitron'; font-size:0.8rem; color:var(--glow); margin-bottom:20px; letter-spacing:2px;">SUPPORT_IDENTITY.LOG</div>
+      <div class="social-grid">
+        <a href="https://wa.me/8801882278234" class="social-item" target="_blank"><i class="ti ti-brand-whatsapp"></i> WHATSAPP</a>
+        <a href="https://t.me/HANTER_XD_OFFICIAL" class="social-item" target="_blank"><i class="ti ti-brand-telegram"></i> TELEGRAM</a>
       </div>
-
-      <div class="info-box">
-        <p><i class="ti ti-mail"></i> alexraselchodhury@gmail.com</p>
-        <p><i class="ti ti-map-pin"></i> Talgharia, Jafarpur (5940), Akkelpur, Joypurhat</p>
+      <div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:12px; margin-top:15px; border:1px dashed var(--brd);">
+        <p style="font-size:0.75rem; color:#888; line-height:1.4;"><i class="ti ti-map-pin" style="color:var(--glow)"></i> TALGHARIA, JAFARPUR(5940), AKKELPUR, JOYPURHAT</p>
       </div>
     </div>
 
   </div>
 
-  <!-- MUSIC PLAYER HUD -->
-  <div class="music-hud">
-    <div style="width:3px; height:20px; background:var(--glow); box-shadow:0 0 10px var(--glow);"></div>
+  <!-- AUDIO HUD (Will Hide on Search) -->
+  <div id="audio-hud">
+    <div style="width:4px; height:20px; background:var(--glow); border-radius:10px; animation: pulse 1s infinite;"></div>
     <div style="flex:1">
-      <div style="font-family:'Orbitron'; font-size:0.55rem; color:var(--glow);">VIP_STREAM_CORE</div>
-      <marquee style="font-size:0.65rem; color:#666; font-family:'Share Tech Mono';">Developer Mode Active | Secure Connection Verified</marquee>
+      <div style="font-family:'Orbitron'; font-size:0.5rem; color:var(--glow);">ELITE_VOICE_CORE</div>
+      <div style="font-size:0.6rem; color:#444; font-family:'Share Tech Mono';">Secure Stream: Active</div>
     </div>
-    <button onclick="controlAudio()" class="m-btn">
-      <i class="ti ti-player-play" id="m-ico" style="color:#000; font-size:1.3rem;"></i>
+    <button onclick="toggleAudio()" style="background:var(--glow); border:none; width:35px; height:35px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+      <i class="ti ti-player-play" id="audio-ico" style="color:#000; font-size:1.2rem;"></i>
     </button>
   </div>
 
-  <!-- BOTTOM NAVIGATION -->
-  <nav class="bnav">
-    <i class="ti ti-home bnav-item active" onclick="location.href='#home'"></i>
-    <i class="ti ti-messages bnav-item" onclick="location.href='#support'"></i>
-    <i class="ti ti-settings bnav-item"></i>
+  <!-- NAVIGATION -->
+  <nav class="navbar">
+    <i class="ti ti-home-bolt nav-icon active"></i>
+    <i class="ti ti-user-shield nav-icon" onclick="location.href='#contact-unit'"></i>
+    <i class="ti ti-settings nav-icon"></i>
   </nav>
 
   <script>
-    // CORE DECRYPTION (Same as your working version)
+    // ═══════════════════════════
+    // CORE ENGINE (FFX 1.0)
+    // ═══════════════════════════
     (function () {
       const _k = 0x5A;
       const _d = function (arr) { return arr.filter(x => x !== _k).map(x => String.fromCharCode(x ^ _k)).join(''); };
@@ -180,23 +167,36 @@
 
     const audio = new Audio("https://raw.githubusercontent.com/HANTER-XD-OFFICIAL/DOWNLOAD/main/bg-music.mp3");
     let isPlaying = false;
-    function controlAudio() {
-      const ico = document.getElementById('m-ico');
+    function toggleAudio() {
+      const ico = document.getElementById('audio-ico');
       if(isPlaying) { audio.pause(); ico.className = "ti ti-player-play"; } 
       else { audio.play(); ico.className = "ti ti-player-pause"; }
       isPlaying = !isPlaying;
     }
 
-    async function runExtraction() {
+    // MISSION INITIATION
+    async function initiateMission() {
       const input = document.getElementById('url').value.trim();
       const btn = document.getElementById('run-btn');
-      const hud = document.getElementById('result-hud');
-      const panel = document.getElementById('action-panel');
-      const preview = document.getElementById('preview');
+      
+      const searchUnit = document.getElementById('search-unit');
+      const resultHud = document.getElementById('result-hud');
+      const audioHud = document.getElementById('audio-hud');
+      const btnBox = document.getElementById('btn-box');
+      const thumb = document.getElementById('thumb');
 
       if(!input) return;
+
+      // 1. TERMINATE AUDIO & HIDE PLAYER
+      audio.pause();
+      audio.currentTime = 0;
+      audioHud.style.opacity = "0";
+      setTimeout(() => { audioHud.style.display = "none"; }, 500);
+
+      // 2. HIDE SEARCH COMPONENTS
+      searchUnit.style.opacity = "0";
+      btn.innerText = "BYPASSING SECURITY...";
       btn.disabled = true;
-      hud.style.display = "none";
 
       try {
         const isTK = /tiktok\.com/i.test(input);
@@ -207,12 +207,12 @@
         if(isTK) {
           const res = await fetch("https://www.tikwm.com/api/?url=" + encodeURIComponent(input));
           data = (await res.json()).data;
-          preview.src = data.cover;
-          const vidUrl = `${_base}${_path}?url=${encodeURIComponent(data.play)}&ext=mp4&filename=Hanter_TK_Video`;
-          const audUrl = `${_base}${_path}?url=${encodeURIComponent(data.music)}&ext=mp3&filename=Hanter_TK_Audio`;
-          panel.innerHTML = `
-            <a href="${vidUrl}" class="dl-action"><i class="ti ti-download"></i> SAVE VIDEO</a>
-            <a href="${audUrl}" class="dl-action" style="margin-top:10px; background:rgba(255,255,255,0.05); color:var(--glow);"><i class="ti ti-music"></i> SAVE MP3</a>
+          thumb.src = data.cover;
+          const vUrl = `${_base}${_path}?url=${encodeURIComponent(data.play)}&ext=mp4&filename=Hanter_TK`;
+          const aUrl = `${_base}${_path}?url=${encodeURIComponent(data.music)}&ext=mp3&filename=Hanter_TK_Audio`;
+          btnBox.innerHTML = `
+            <a href="${vUrl}" class="save-btn btn-v"><i class="ti ti-download"></i> SAVE VIDEO HD</a>
+            <a href="${aUrl}" class="save-btn btn-a"><i class="ti ti-music"></i> SAVE MP3 CORE</a>
           `;
         } else {
           const res = await fetch(_base + '/api/download', {
@@ -221,16 +221,26 @@
             body: JSON.stringify({ url: input })
           });
           data = await res.json();
-          preview.src = data.cover || "https://img.freepik.com/free-vector/cyber-security-concept_23-2148532223.jpg";
-          const target = data.hdplay || data.play;
-          const dlUrl = `${_base}${_path}?url=${encodeURIComponent(target)}&ext=mp4&filename=Hanter_FB_Video`;
-          panel.innerHTML = `<a href="${dlUrl}" class="dl-action"><i class="ti ti-download"></i> SAVE HD VIDEO</a>`;
+          thumb.src = data.cover || "https://img.freepik.com/free-vector/cyber-security-concept_23-2148532223.jpg";
+          const vTarget = data.hdplay || data.play;
+          const aTarget = data.music || data.audio;
+          const vUrl = `${_base}${_path}?url=${encodeURIComponent(vTarget)}&ext=mp4&filename=Hanter_FB`;
+          btnBox.innerHTML = `<a href="${vUrl}" class="save-btn btn-v"><i class="ti ti-download"></i> SAVE HD VIDEO</a>`;
+          if(aTarget) {
+            const aUrl = `${_base}${_path}?url=${encodeURIComponent(aTarget)}&ext=mp3&filename=Hanter_FB_Audio`;
+            btnBox.innerHTML += `<a href="${aUrl}" class="save-btn btn-a"><i class="ti ti-music"></i> SAVE MP3 CORE</a>`;
+          }
         }
-        hud.style.display = "block";
+
+        // 3. SHOW RESULTS & FINAL HIDE
+        setTimeout(() => {
+          searchUnit.style.display = "none";
+          resultHud.style.display = "block";
+        }, 500);
+
       } catch (e) {
-        alert("Extraction Error!");
-      } finally {
-        btn.disabled = false;
+        alert("CRITICAL ERROR: SOURCE REJECTED");
+        location.reload();
       }
     }
   </script>
