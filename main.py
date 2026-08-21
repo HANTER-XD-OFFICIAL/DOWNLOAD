@@ -71,19 +71,17 @@ FB_BASE_NODE = decrypt_api_nodes()
 # ═══════════════════════════
 def get_main_keyboard(user_id):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    # Re-adding emojis for the premium look
     btn_dl = types.KeyboardButton("📥 Start Download")
     btn_sup = types.KeyboardButton("☎️ Support")
     markup.row(btn_dl, btn_sup)
-    
     if user_id == ADMIN_ID:
         btn_adm = types.KeyboardButton("📊 System Analytics")
         markup.row(btn_adm)
-    
     return markup
 
 def get_support_vault():
     markup = types.InlineKeyboardMarkup(row_width=2)
+    # 🟢 Integrated your Telegram ID link
     tg = types.InlineKeyboardButton("✈️ Telegram", url="https://t.me/HANTER_XD_OFFICIAL")
     fb = types.InlineKeyboardButton("👤 Facebook", url="https://www.facebook.com/md.rasel.7.8.2.3.4")
     wa = types.InlineKeyboardButton("💬 WhatsApp", url="https://wa.me/8801882278234")
@@ -112,7 +110,7 @@ def system_boot(message):
         f"✨ Assalamu Alaikum, {first_name}!\n\n"
         f"Welcome to the elite media extraction node. Stay righteous "
         f"and perform your Salah on time. Success is only from Allah.\n\n"
-        f"👤 Architect: [HANTER-XD](https://t.me/HANTER_XD_OFFICIAL)\n"
+        f"👤 Architect: [HANTER-XD OFFICIAL](https://t.me/HANTER_XD_OFFICIAL)\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
         f"⚠️ Instruction: Use the menu buttons below to interact."
     )
@@ -129,7 +127,6 @@ def system_boot(message):
     if is_new:
         bot.send_message(ADMIN_ID, f"🔔 *NEW ACCESS GRANTED:* {first_name} (ID: `{user_id}`)")
 
-# ADMIN FIREWALL COMMANDS
 @bot.message_handler(commands=['ban'])
 def ban_handler(message):
     if message.chat.id == ADMIN_ID:
@@ -174,7 +171,7 @@ def central_handler(message):
         try:
             if "tiktok.com" in text:
                 res = requests.get(f"https://www.tikwm.com/api/?url={text}").json()
-                bot.send_video(chat_id, res['data']['play'], caption="✅ *TikTok HD Success*")
+                bot.send_video(chat_id, res['data']['play'], caption=f"✅ *TikTok Success*\nBy: @HANTER_XD_OFFICIAL")
             
             elif any(x in text for x in ["youtube.com", "youtu.be", "instagram.com"]):
                 res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={text}").json()
@@ -185,9 +182,9 @@ def central_handler(message):
                 v_url = res.get('hdplay') or res.get('play')
                 bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*")
             else:
-                bot.send_message(chat_id, "❌ *Protocol Error: Unknown Node.*")
+                bot.send_message(chat_id, "❌ *Protocol Error: Node Not Supported.*")
         except:
-            bot.send_message(chat_id, "⚠️ *Failure:* Content Private or Restricted.")
+            bot.send_message(chat_id, "⚠️ *Failure:* Link is Private or Restricted.")
         finally:
             bot.delete_message(chat_id, wait_log.message_id)
 
@@ -197,6 +194,5 @@ def central_handler(message):
 if __name__ == "__main__":
     Thread(target=run_server).start()
     print("ULTRA-SAVE PRO SYSTEM: ONLINE")
-    
     bot.remove_webhook()
     bot.infinity_polling()
