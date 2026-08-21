@@ -99,7 +99,7 @@ def system_boot(message):
         f"✨ Assalamu Alaikum, {first_name}!\n\n"
         f"Welcome to the elite media extraction node. Stay righteous "
         f"and perform your Salah on time. Success is only from Allah.\n\n"
-        f"👤 Architect: [HANTER-XD](https://t.me/HANTER_XD_OFFICIAL)\n"
+        f"👤 Architect: [HANTER-XD OFFICIAL](https://t.me/HANTER_XD_OFFICIAL)\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
         f"⚠️ Instruction: Use the menu buttons below to interact."
     )
