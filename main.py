@@ -20,7 +20,7 @@ def run_server():
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 # SYSTEM IDENTITY & CREDENTIALS
-TOKEN = "8523953940:AAGzJRfKPepZypt320Wee-VReY_2KqOeYyM"
+TOKEN = "8523953940:AAEqgfledxNQUZ6Q-eCU_3wQtaCugkCKuv8"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
 
