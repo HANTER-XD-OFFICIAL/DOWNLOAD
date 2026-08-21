@@ -58,20 +58,18 @@ def decrypt_core_nodes():
 FB_BASE_NODE = decrypt_core_nodes()
 
 # ═══════════════════════════
-# BUTTON INTERFACE LOGIC
+# MENU BAR (REPLY KEYBOARD)
 # ═══════════════════════════
-def get_main_keyboard(user_id):
-    markup = types.InlineKeyboardMarkup(row_width=2)
-    dl_btn = types.InlineKeyboardButton("📥 Start Download", callback_data="activate_extraction")
-    support_btn = types.InlineKeyboardButton("☎️ Support", url="https://t.me/HANTER_XD_OFFICIAL")
+def get_menu_keyboard(user_id):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    btn_download = types.KeyboardButton("📥 Start Download")
+    btn_support = types.KeyboardButton("☎️ Support")
     
-    # Static buttons first
-    markup.add(dl_btn, support_btn)
-    
-    # Hidden Admin Button
     if user_id == ADMIN_ID:
-        admin_btn = types.InlineKeyboardButton("📊 System Analytics (Admin)", callback_data="view_stats")
-        markup.add(admin_btn)
+        btn_admin = types.KeyboardButton("📊 System Analytics")
+        markup.add(btn_download, btn_support, btn_admin)
+    else:
+        markup.add(btn_download, btn_support)
     
     return markup
 
@@ -92,14 +90,14 @@ def system_initiate(message):
         f"In the name of Allah, the Most Gracious, the Most Merciful. "
         f"Welcome to the elite media extraction system.\n\n"
         f"📢 *Devotional Reminder:*\n"
-        f"Do not forget your Salah. It is the boundary between a believer "
-        f"and disbelief. Stay on the path of Allah.\n\n"
+        f"Keep your heart pure and your Salah on time. Success comes "
+        f"only from Allah. Stay on the right path.\n\n"
         f"👤 *Architect:* [HANTER-XD](https://t.me/HANTER_XD_OFFICIAL)\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
-        f"⚠️ *Note:* To download media, you MUST click the button below first."
+        f"⚠️ *Protocol:* Use the Menu Bar below to interact with the system."
     )
     
-    bot.send_message(user_id, welcome_protocol, parse_mode='Markdown', reply_markup=get_main_keyboard(user_id), disable_web_page_preview=True)
+    bot.send_message(user_id, welcome_protocol, parse_mode='Markdown', reply_markup=get_menu_keyboard(user_id), disable_web_page_preview=True)
     
     try:
         bot.send_voice(user_id, VOICE_PACK_URL, caption="🎙️ *Hanter-XD System Audio Pack*")
@@ -107,34 +105,32 @@ def system_initiate(message):
         bot.send_audio(user_id, VOICE_PACK_URL, caption="🎙️ *Hanter-XD System Audio Pack*")
 
     if is_new:
-        bot.send_message(ADMIN_ID, f"🔔 *NEW USER:* {first_name} (ID: `{user_id}`)", parse_mode='Markdown')
-
-@bot.callback_query_handler(func=lambda call: True)
-def handle_interface_logic(call):
-    chat_id = call.message.chat.id
-    
-    if call.data == "activate_extraction":
-        bot.answer_callback_query(call.id, "Extraction Mode Activated.")
-        msg = bot.send_message(chat_id, "✅ *Protocol Ready!*\n\nPlease paste your video link now:", parse_mode='Markdown')
-        # Register user for the next message (link)
-        bot.register_next_step_handler(msg, process_media_link)
-
-    elif call.data == "view_stats":
-        if chat_id == ADMIN_ID:
-            users = load_system_users()
-            bot.answer_callback_query(call.id)
-            bot.send_message(ADMIN_ID, f"📊 *LIVE ANALYTICS*\n━━━━━━━━━━━━━━\n👥 Total Users: `{len(users)}`", parse_mode='Markdown')
-        else:
-            bot.answer_callback_query(call.id, "❌ Error: Access Denied.", show_alert=True)
+        bot.send_message(ADMIN_ID, f"🔔 *NEW USER ACCESS:* {first_name} (ID: `{user_id}`)", parse_mode='Markdown')
 
 # ═══════════════════════════
-# LINK BLOCKER LOGIC
+# MENU BUTTONS HANDLER
 # ═══════════════════════════
 @bot.message_handler(func=lambda message: True)
-def block_unauthorized_links(message):
-    # This handler runs only if user hasn't clicked "Download" button
-    if message.text.startswith("http"):
-        bot.reply_to(message, "❌ *Access Denied!*\n\nYou cannot send links directly. Please click the *📥 Start Download* button first to initialize the system.", parse_mode='Markdown')
+def handle_menu_commands(message):
+    chat_id = message.chat.id
+    text = message.text
+
+    if text == "📥 Start Download":
+        msg = bot.send_message(chat_id, "✅ *Extraction Mode Active!*\n\nPlease paste your video link now:", parse_mode='Markdown')
+        bot.register_next_step_handler(msg, process_media_link)
+
+    elif text == "☎️ Support":
+        bot.send_message(chat_id, "🛡️ *Developer Support Node:*\n\nYou can contact the architect here: @HANTER_XD_OFFICIAL", parse_mode='Markdown')
+
+    elif text == "📊 System Analytics":
+        if chat_id == ADMIN_ID:
+            users = load_system_users()
+            bot.send_message(ADMIN_ID, f"📊 *LIVE ANALYTICS*\n━━━━━━━━━━━━━━\n👥 Total Authorized Users: `{len(users)}`", parse_mode='Markdown')
+        else:
+            bot.send_message(chat_id, "❌ *Access Denied.*")
+
+    elif text.startswith("http"):
+        bot.reply_to(message, "❌ *Action Blocked!*\n\nPlease click the *📥 Start Download* button in the menu first to initialize decryption.", parse_mode='Markdown')
 
 # ═══════════════════════════
 # EXTRACTION ENGINE
@@ -144,33 +140,33 @@ def process_media_link(message):
     chat_id = message.chat.id
 
     if not url.startswith("http"):
-        bot.send_message(chat_id, "❌ *Invalid URL Structure!* Mission Aborted.")
+        bot.send_message(chat_id, "❌ *Invalid URL Structure!* Process Terminated.")
         return
 
-    wait_log = bot.send_message(chat_id, "⚡ *Decrypting Media Node...*", parse_mode='Markdown')
+    wait_log = bot.send_message(chat_id, "⚡ *System Bypassing Encryption...*", parse_mode='Markdown')
 
     try:
         # 1. TIKTOK
         if "tiktok.com" in url:
             res = requests.get(f"https://www.tikwm.com/api/?url={url}").json()
             d = res['data']
-            caption = f"✅ *TikTok Success*\n\n📝 *Title:* {d.get('title','N/A')}\n👤 *Author:* {d['author']['nickname']}\n🆔 @{d['author']['unique_id']}\n\n_By HANTER-XD_"
+            caption = f"✅ *TikTok Success*\n\n📝 *Title:* {d.get('title','N/A')}\n👤 @{d['author']['unique_id']}\n\n_By HANTER-XD_"
             bot.send_video(chat_id, d['play'], caption=caption, parse_mode='Markdown')
 
         # 2. YT / IG
         elif any(x in url for x in ["youtube.com", "youtu.be", "instagram.com"]):
             res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={url}").json()
-            caption = f"✅ *Extraction Success*\n\n📝 *Target:* {res.get('title','Media')}\n\n_Engineered by ULTRA-SAVE PRO_"
+            caption = f"✅ *Extraction Success*\n\n📝 {res.get('title','Media Content')}\n\n_Engineered by ULTRA-SAVE PRO_"
             bot.send_video(chat_id, res['play'], caption=caption, parse_mode='Markdown')
 
         # 3. FACEBOOK
         elif any(x in url for x in ["facebook.com", "fb.watch", "fb.gg"]):
             res = requests.post(f"{FB_BASE_NODE}/api/download", json={"url": url}).json()
             v_url = res.get('hdplay') or res.get('play')
-            caption = f"✅ *Facebook HD Success*\n\n🔗 [Original Link]({url})\n\n_Protected by Hanter-XD Core_"
+            caption = f"✅ *Facebook HD Success*\n\n🔗 [Original Node]({url})\n\n_Hanter-XD Core Protection_"
             bot.send_video(chat_id, v_url, caption=caption, parse_mode='Markdown')
         else:
-            bot.send_message(chat_id, "❌ *Link Node Not Supported.*")
+            bot.send_message(chat_id, "❌ *Node Not Recognized.*")
 
     except:
         bot.send_message(chat_id, "⚠️ *Critical Failure:* Extraction Blocked.")
