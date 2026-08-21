@@ -81,7 +81,7 @@ def get_main_keyboard(user_id):
 
 def get_support_vault():
     markup = types.InlineKeyboardMarkup(row_width=2)
-    # 🟢 Integrated your Telegram Username Link
+    # 🟢 DIRECT TELEGRAM USERNAME INTEGRATED
     tg = types.InlineKeyboardButton("✈️ Telegram", url="https://t.me/HANTER_XD_OFFICIAL")
     fb = types.InlineKeyboardButton("👤 Facebook", url="https://www.facebook.com/md.rasel.7.8.2.3.4")
     wa = types.InlineKeyboardButton("💬 WhatsApp", url="https://wa.me/8801882278234")
@@ -117,7 +117,6 @@ def system_boot(message):
     
     bot.send_message(user_id, welcome_protocol, parse_mode='Markdown', reply_markup=get_main_keyboard(user_id), disable_web_page_preview=True)
     
-    # 🎙️ SEND SYSTEM VOICE PACK (DIRECT BUFFER)
     try:
         audio_stream = requests.get(VOICE_PACK_URL).content
         audio_file = io.BytesIO(audio_stream)
@@ -157,7 +156,8 @@ def central_handler(message):
     text = message.text
 
     if "Start Download" in text:
-        bot.send_message(chat_id, "✅ *Protocol Ready!*\nPlease paste your video link now:")
+        msg = bot.send_message(chat_id, "✅ *Protocol Ready!*\nPlease paste your video link now:")
+        bot.register_next_step_handler(msg, process_extraction)
     
     elif "Support" in text:
         bot.send_message(chat_id, "🛡️ *Identity Vault Support Node:*", reply_markup=get_support_vault())
@@ -168,31 +168,48 @@ def central_handler(message):
             bot.send_message(ADMIN_ID, f"📊 *LIVE ANALYTICS*\n━━━━━━━━━━━━━━\n👥 Total Users: `{count}`", parse_mode='Markdown')
 
     elif text.startswith("http"):
-        wait_log = bot.send_message(chat_id, "⚡ *Decrypting Media Node...*", parse_mode='Markdown')
-        try:
-            # 1. TIKTOK
-            if "tiktok.com" in text:
-                res = requests.get(f"https://www.tikwm.com/api/?url={text}").json()
-                data = res['data']
-                caption = f"✅ *TikTok HD Success*\n\n👤 {data['author']['nickname']}\n🔗 [Source Link]({text})"
-                bot.send_video(chat_id, data['play'], caption=caption, parse_mode='Markdown')
-            
-            # 2. YT / IG
-            elif any(x in text for x in ["youtube.com", "youtu.be", "instagram.com"]):
-                res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={text}").json()
-                bot.send_video(chat_id, res['play'], caption="✅ *Extraction Successful*")
-            
-            # 3. FACEBOOK
-            elif any(x in text for x in ["facebook.com", "fb.watch", "fb.gg"]):
-                res = requests.post(f"{FB_BASE_NODE}/api/download", json={"url": text}).json()
-                v_url = res.get('hdplay') or res.get('play')
-                bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*")
-            else:
-                bot.send_message(chat_id, "❌ *Protocol Error: Node Not Supported.*")
-        except:
-            bot.send_message(chat_id, "⚠️ *Failure:* Link is Private or Restricted.")
-        finally:
-            bot.delete_message(chat_id, wait_log.message_id)
+        bot.reply_to(message, "❌ *Blocked:* You must click *📥 Start Download* in the menu first.", parse_mode='Markdown')
+
+# ═══════════════════════════
+# EXTRACTION ENGINE
+# ═══════════════════════════
+def process_extraction(message):
+    url = message.text.strip()
+    chat_id = message.chat.id
+    
+    if "Support" in url or "Start Download" in url or "Analytics" in url:
+        central_handler(message)
+        return
+
+    if not url.startswith("http"):
+        bot.send_message(chat_id, "❌ *Error:* Invalid Link. Extraction Terminated.")
+        return
+
+    wait_log = bot.send_message(chat_id, "⚡ *Decrypting Media Node...*", parse_mode='Markdown')
+    try:
+        # 1. TIKTOK
+        if "tiktok.com" in url:
+            res = requests.get(f"https://www.tikwm.com/api/?url={url}").json()
+            data = res['data']
+            caption = f"✅ *TikTok HD Success*\n\n👤 {data['author']['nickname']}\n🔗 [Source Link]({url})"
+            bot.send_video(chat_id, data['play'], caption=caption, parse_mode='Markdown')
+        
+        # 2. YT / IG
+        elif any(x in url for x in ["youtube.com", "youtu.be", "instagram.com"]):
+            res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={url}").json()
+            bot.send_video(chat_id, res['play'], caption="✅ *Extraction Successful*", parse_mode='Markdown')
+        
+        # 3. FACEBOOK
+        elif any(x in url for x in ["facebook.com", "fb.watch", "fb.gg"]):
+            res = requests.post(f"{FB_BASE_NODE}/api/download", json={"url": url}).json()
+            v_url = res.get('hdplay') or res.get('play')
+            bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*", parse_mode='Markdown')
+        else:
+            bot.send_message(chat_id, "❌ *Protocol Error: Unknown Node.*")
+    except:
+        bot.send_message(chat_id, "⚠️ *Failure:* Content Private or Restricted.")
+    finally:
+        bot.delete_message(chat_id, wait_log.message_id)
 
 # ═══════════════════════════
 # EXECUTION START
@@ -201,6 +218,5 @@ if __name__ == "__main__":
     Thread(target=run_server).start()
     print("ULTRA-SAVE PRO SYSTEM: ONLINE")
     
-    # Resolves Conflict Error 409 and clears pending updates
     bot.remove_webhook()
     bot.infinity_polling()
