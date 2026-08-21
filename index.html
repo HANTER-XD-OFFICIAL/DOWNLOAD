@@ -1,161 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#00e5ff">
-  <meta name="referrer" content="no-referrer">
-  <title>ULTRA-SAVE PRO | CORE ENGINE</title>
-
-  <!-- 
-    [ GITHUB CONFIGURATION ]
-  -->
-  <!-- THEME_COLOR: 0, 229, 255 -->
-  <!-- TIKTOK_LINK: https://www.tiktok.com/ -->
-  <!-- FB_LINK: https://www.facebook.com/ -->
-  <!-- MUSIC_SRC: https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/audio.mp3 -->
-  <!-- PROFILE_PIC: https://cdn-icons-png.flaticon.com/512/8922/8922789.png -->
+  <title>ULTRA-SAVE PRO | HANTER-XD</title>
   
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <!-- MUSIC SOURCE FROM YOUR GITHUB -->
+  <!-- MUSIC_SRC: https://raw.githubusercontent.com/HANTER-XD-OFFICIAL/DOWNLOAD/main/bg-music.mp3 -->
+  
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Rajdhani:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   
   <style>
     :root {
-      --a: #00e5ff;
-      --ag: rgba(0, 229, 255, 0.7);
-      --ad: rgba(0, 229, 255, 0.1);
-      --ab: rgba(0, 229, 255, 0.35);
-      --bg0: #030407;
-      --bg1: #07080f;
-      --brd: rgba(255, 255, 255, 0.05);
-      --brda: rgba(0, 229, 255, 0.28);
-      --txt: #e8e8f0;
-      --txm: #8888aa;
+      --primary: #00f7ff;
+      --accent: #ff007b;
+      --bg: #020205;
+      --card: rgba(10, 15, 25, 0.9);
+      --brd: rgba(0, 247, 255, 0.25);
     }
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Rajdhani', sans-serif; background: var(--bg0); color: var(--txt); overflow-x: hidden; min-height: 100vh; }
-    
-    .scanline { position: fixed; inset: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--ag), transparent); z-index: 9; pointer-events: none; animation: scanDown 8s linear infinite; }
-    @keyframes scanDown { 0% { top: -5px; } 100% { top: 100vh; } }
-    
-    #preloader { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s ease; }
-    #preloader.out { opacity: 0; visibility: hidden; }
+    body { 
+      background: var(--bg); color: #fff; font-family: 'Rajdhani', sans-serif; 
+      margin: 0; min-height: 100vh; overflow-x: hidden;
+    }
 
-    .wrap { width: 100%; max-width: 430px; margin: 0 auto; padding: 20px 15px 100px; position: relative; z-index: 2; }
-    .card { background: var(--bg1); border: 1px solid var(--brd); border-radius: 16px; padding: 25px 20px; margin-bottom: 15px; position: relative; overflow: hidden; }
-    .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--a), transparent); }
+    /* CUSTOM SVG LOGO STYLE */
+    .logo-container {
+      width: 50px; height: 50px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0, 247, 255, 0.1);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      box-shadow: 0 0 15px var(--brd);
+    }
 
-    .logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-    .logo-img { width: 45px; height: 45px; border-radius: 12px; border: 1px solid var(--brda); object-fit: cover; }
+    /* VIP HEADER */
+    .header {
+      max-width: 450px; margin: 0 auto;
+      padding: 20px 15px; display: flex; align-items: center; gap: 15px;
+      border-bottom: 1px solid var(--brd);
+    }
 
-    .input-wrap { position: relative; margin: 20px 0; }
-    .url-input { width: 100%; padding: 15px 15px 15px 45px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--brd); color: #fff; outline: none; transition: 0.3s; }
-    .url-input:focus { border-color: var(--a); box-shadow: 0 0 15px var(--ad); }
-    .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--a); }
+    .dev-meta { flex: 1; }
+    .dev-meta h1 { font-family: 'Orbitron'; font-size: 0.9rem; margin: 0; letter-spacing: 1px; }
+    .badge { 
+      font-size: 0.55rem; background: linear-gradient(90deg, var(--accent), var(--primary));
+      padding: 2px 8px; border-radius: 4px; color: #000; font-weight: 900;
+    }
 
-    .dl-btn { width: 100%; padding: 16px; border-radius: 10px; background: var(--a); color: #000; font-family: 'Orbitron', sans-serif; font-weight: 700; border: none; cursor: pointer; transition: 0.3s; letter-spacing: 1px; }
-    .dl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    /* MAIN INTERFACE */
+    .container { max-width: 450px; margin: 30px auto; padding: 0 15px; }
+    .card {
+      background: var(--card); backdrop-filter: blur(20px);
+      border: 1px solid var(--brd); border-radius: 25px; padding: 30px 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8); position: relative;
+    }
 
-    /* STATUS & LOADER */
-    .status-container { display: none; margin-top: 15px; flex-direction: column; align-items: center; gap: 10px; }
-    .spinner { width: 20px; height: 20px; border: 2px solid var(--ad); border-top-color: var(--a); border-radius: 50%; animation: spin 0.8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .input-wrap { position: relative; margin: 25px 0; }
+    .input-wrap i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); }
+    .url-input {
+      width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.5);
+      border: 1px solid var(--brd); padding: 15px 15px 15px 45px;
+      border-radius: 12px; color: #fff; font-family: 'Rajdhani'; font-size: 1rem;
+    }
 
-    /* RESULT AREA */
-    #result-box { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--brd); }
-    .preview-thumb { width: 100%; border-radius: 12px; border: 1px solid var(--brda); margin-bottom: 15px; box-shadow: 0 0 20px var(--ad); }
-    
-    .media-btn { display: flex; align-items: center; gap: 12px; padding: 14px; background: var(--ad); border: 1px solid var(--brda); border-radius: 12px; color: #fff; text-decoration: none; margin-bottom: 10px; transition: 0.2s; }
-    .media-btn:hover { background: var(--a); color: #000; }
-    .media-btn i { font-size: 1.4rem; color: var(--a); }
-    .media-btn:hover i { color: #000; }
+    .btn {
+      width: 100%; padding: 16px; border-radius: 12px; border: none;
+      background: var(--primary); color: #000; font-family: 'Orbitron';
+      font-weight: 900; cursor: pointer; transition: 0.3s; letter-spacing: 1px;
+    }
 
-    .img-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
-    .img-item { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid var(--brd); }
+    /* MUSIC PLAYER ORB */
+    .music-orb {
+      position: fixed; bottom: 85px; left: 20px; right: 20px;
+      background: rgba(0,0,0,0.9); border: 1px solid var(--brd);
+      border-radius: 50px; padding: 10px 20px; display: flex; align-items: center; gap: 12px;
+      backdrop-filter: blur(15px); transform: translateY(150px); transition: 0.5s;
+    }
+    .music-orb.active { transform: translateY(0); }
 
-    /* MUSIC PLAYER */
-    #musicNotif { position: fixed; bottom: 85px; left: 15px; right: 15px; background: rgba(10,12,18,0.95); border: 1px solid var(--brda); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 12px; transform: translateY(200px); transition: 0.5s; z-index: 1000; backdrop-filter: blur(10px); }
-    #musicNotif.show { transform: translateY(0); }
-    .mn-img { width: 50px; height: 50px; border-radius: 12px; animation: spinRotate 4s linear infinite paused; border: 1px solid var(--brda); }
-    .mn-img.playing { animation-play-state: running; }
-    @keyframes spinRotate { 100% { transform: rotate(360deg); } }
+    .disc {
+      width: 40px; height: 40px; background: var(--primary); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      animation: rotate 4s linear infinite paused;
+    }
+    .disc.playing { animation-play-state: running; }
+    @keyframes rotate { 100% { transform: rotate(360deg); } }
 
-    .bnav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,6,10,0.95); border-top: 1px solid var(--brd); display: flex; justify-content: space-around; padding: 12px; z-index: 100; }
-    .bnav-item { color: var(--txm); font-size: 20px; }
+    /* RESULTS */
+    #result { display: none; margin-top: 25px; }
+    .dl-btn {
+      display: flex; align-items: center; gap: 10px; background: rgba(0,247,255,0.05);
+      border: 1px solid var(--brd); padding: 12px; border-radius: 12px;
+      color: #fff; text-decoration: none; margin-bottom: 10px; transition: 0.3s;
+    }
+    .dl-btn:hover { background: var(--primary); color: #000; }
   </style>
 </head>
-
 <body>
-  <div class="scanline"></div>
 
-  <div id="preloader">
-    <div class="pl-logo" style="font-family:'Orbitron'">ULTRA-<span>SAVE</span></div>
-    <div style="color:var(--a); font-family:'Share Tech Mono'; margin-top:10px;" id="pl-pct">0%</div>
-  </div>
-
-  <div class="wrap">
-    <div class="logo-row">
-      <img src="" id="main-logo" class="logo-img">
-      <div style="font-family:'Orbitron'; font-weight:900; letter-spacing:2px; font-size:1.2rem;">ULTRA-<span style="color:var(--a)">SAVE</span></div>
+  <header class="header">
+    <div class="logo-container">
+      <!-- UNIQUE VIP LOGO (SVG) -->
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#00f7ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/>
+      </svg>
     </div>
+    <div class="dev-meta">
+      <h1>HANTER-XD OFFICIAL</h1>
+      <span class="badge">VIP DEVELOPER</span>
+    </div>
+    <i class="ti ti-activity" style="color:var(--primary)"></i>
+  </header>
 
+  <div class="container">
     <div class="card">
-      <div style="font-family:'Share Tech Mono'; color:var(--a); font-size:0.7rem; letter-spacing:3px; margin-bottom:10px;">// CORE_ENGINE_V1.0</div>
-      <h2 style="font-family:'Orbitron'; margin-bottom:10px; font-size: 1.4rem;">Media Extractor</h2>
-      
+      <div style="font-family:'Share Tech Mono'; color:var(--primary); font-size:0.7rem;">// SYSTEM_ACCESS: GRANTED</div>
+      <h2 style="font-family:'Orbitron'; font-size:1.2rem; margin: 15px 0 5px;">ULTRA-SAVE PRO</h2>
+      <p style="font-size:0.8rem; color:#888; margin-bottom:20px;">Premium Multi-Platform Downloader Core</p>
+
       <div class="input-wrap">
-        <i class="ti ti-link input-icon"></i>
-        <input type="text" id="url" class="url-input" placeholder="Paste link here...">
-      </div>
-      
-      <button class="dl-btn" id="submit-btn" onclick="downloadVideo()">START EXTRACTION</button>
-      
-      <div id="loader" class="status-container">
-        <div class="spinner"></div>
-        <span style="font-family:'Share Tech Mono'; font-size:0.7rem; color:var(--a)">ACCESSING REMOTE SERVERS...</span>
+        <i class="ti ti-link"></i>
+        <input type="text" id="url" class="url-input" placeholder="Paste URL (TikTok / Facebook)">
       </div>
 
-      <!-- Result View -->
-      <div id="result-box">
-        <img id="vid-thumb" class="preview-thumb" src="" style="display:none;">
-        <div id="img-grid" class="img-grid" style="display:none;"></div>
-        
-        <a id="vid-btn" href="#" class="media-btn" style="display:none;">
-          <i class="ti ti-video"></i>
-          <div><div style="font-weight:bold; font-size:0.9rem;">DOWNLOAD VIDEO</div><small style="opacity:0.6; font-size:0.6rem;">HD • MP4 • NO WATERMARK</small></div>
-        </a>
+      <button class="btn" id="dl-btn" onclick="download()">EXECUTE EXTRACTION</button>
 
-        <a id="aud-btn" href="#" class="media-btn" style="display:none;">
-          <i class="ti ti-music"></i>
-          <div><div style="font-weight:bold; font-size:0.9rem;">DOWNLOAD AUDIO</div><small style="opacity:0.6; font-size:0.6rem;">High Quality • MP3</small></div>
-        </a>
+      <div id="result">
+        <img id="thumb" style="width:100%; border-radius:15px; margin: 20px 0; border:1px solid var(--brd);">
+        <div id="links"></div>
       </div>
     </div>
   </div>
 
-  <div id="musicNotif">
-    <img src="" id="music-img" class="mn-img">
+  <div class="music-orb" id="orb">
+    <div class="disc" id="disc">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    </div>
     <div style="flex:1">
-      <div style="font-size:0.8rem; font-weight:bold;">CORE_AUDIO.EXE</div>
-      <div style="font-size:0.6rem; color:var(--txm);" id="music-status">Status: Waiting</div>
+      <div style="font-family:'Orbitron'; font-size:0.55rem; color:var(--primary)">HANTER_STREAM.EXE</div>
+      <div style="font-size:0.65rem; color:#888;">Playing: Premium Background Audio</div>
     </div>
-    <button onclick="toggleMusic()" id="play-btn" style="background:var(--a); border:none; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;"><i class="ti ti-player-play" style="color:#000"></i></button>
+    <button onclick="toggleMusic()" id="m-btn" style="background:var(--primary); border:none; width:35px; height:35px; border-radius:50%; cursor:pointer;">
+      <i class="ti ti-player-play" id="m-icon" style="color:#000"></i>
+    </button>
   </div>
-
-  <nav class="bnav">
-    <i class="ti ti-home bnav-item" style="color:var(--a)"></i>
-    <i class="ti ti-brand-tiktok bnav-item"></i>
-    <i class="ti ti-brand-facebook bnav-item"></i>
-    <i class="ti ti-settings bnav-item"></i>
-  </nav>
 
   <script>
-    // ═══════════════════════════
-    // ORIGINAL ENCRYPTION LOGIC (FROM FFX 1.0)
-    // ═══════════════════════════
+    // CORE DECRYPTION (Same as your working version)
     (function () {
       const _k = 0x5A;
       const _d = function (arr) { return arr.filter(x => x !== _k).map(x => String.fromCharCode(x ^ _k)).join(''); };
@@ -164,137 +157,63 @@
       window.__fbBase = _d(_fa); window.__fbPath = _d(_fb);
     })();
 
-    // GitHub Assets
-    let musicUrl = "";
-    let profilePic = "";
-    (function() {
-      const comments = document.head.childNodes;
-      comments.forEach(node => {
-        if (node.nodeType === 8) {
-          const content = node.textContent;
-          if(content.includes('MUSIC_SRC:')) musicUrl = content.split('MUSIC_SRC:')[1].trim();
-          if(content.includes('PROFILE_PIC:')) profilePic = content.split('PROFILE_PIC:')[1].trim();
-        }
-      });
-      document.getElementById('main-logo').src = profilePic;
-      document.getElementById('music-img').src = profilePic;
-    })();
+    // MUSIC CONFIG
+    const audio = new Audio("https://raw.githubusercontent.com/HANTER-XD-OFFICIAL/DOWNLOAD/main/bg-music.mp3");
+    let isPlaying = false;
 
-    // Boot Loader
-    let pct = 0;
-    const boot = setInterval(() => {
-      pct += 4;
-      if(pct >= 100) { clearInterval(boot); document.getElementById('preloader').classList.add('out'); setTimeout(()=>document.getElementById('musicNotif').classList.add('show'), 2000); }
-      document.getElementById('pl-pct').innerText = pct + "%";
-    }, 40);
+    setTimeout(() => { document.getElementById('orb').classList.add('active'); }, 2000);
 
-    // ═══════════════════════════
-    // CORE DOWNLOAD ENGINE (ORIGINAL LOGIC)
-    // ═══════════════════════════
-    async function downloadVideo() {
-      const url = document.getElementById('url').value.trim();
-      const loader = document.getElementById('loader');
-      const resultBox = document.getElementById('result-box');
-      const btn = document.getElementById('submit-btn');
+    function toggleMusic() {
+      const icon = document.getElementById('m-icon');
+      const disc = document.getElementById('disc');
+      if(isPlaying) {
+        audio.pause();
+        icon.className = "ti ti-player-play";
+        disc.classList.remove('playing');
+      } else {
+        audio.play();
+        icon.className = "ti ti-player-pause";
+        disc.classList.add('playing');
+      }
+      isPlaying = !isPlaying;
+    }
+
+    async function download() {
+      const url = document.getElementById('url').value;
+      const btn = document.getElementById('dl-btn');
+      if(!url) return;
       
-      const vidBtn = document.getElementById('vid-btn');
-      const audBtn = document.getElementById('aud-btn');
-      const imgGrid = document.getElementById('img-grid');
-      const vidThumb = document.getElementById('vid-thumb');
-
-      if (!url) { alert("Please paste a link!"); return; }
-
-      // Hide previous results
-      resultBox.style.display = 'none';
-      vidBtn.style.display = 'none';
-      audBtn.style.display = 'none';
-      imgGrid.style.display = 'none';
-      imgGrid.innerHTML = '';
-      vidThumb.style.display = 'none';
-
+      btn.innerText = "EXTRACTING...";
       btn.disabled = true;
-      loader.style.display = 'flex';
-
-      const isTikTok = /tiktok\.com/i.test(url);
-      const isFB = /facebook\.com|fb\.watch|fb\.gg/i.test(url);
 
       try {
-        let data, _base = window.__fbBase, _path = window.__fbPath;
-
-        if (isTikTok) {
-          const res = await fetch("https://www.tikwm.com/api/?url=" + encodeURIComponent(url));
-          const responseData = await res.json();
-          if (responseData.code !== 0) throw new Error(responseData.msg);
-          data = responseData.data;
-        } else if (isFB) {
-          const res = await fetch(_base + '/api/download', {
+        const isTikTok = /tiktok\.com/i.test(url);
+        let api = isTikTok ? `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}` : `${window.__fbBase}/api/download`;
+        
+        let res;
+        if(isTikTok) {
+          res = await (await fetch(api)).json();
+          const data = res.data;
+          document.getElementById('thumb').src = data.cover;
+          document.getElementById('links').innerHTML = `
+            <a href="${data.play}" class="dl-btn" target="_blank"><i class="ti ti-video"></i> VIDEO (NO WATERMARK)</a>
+            <a href="${data.music}" class="dl-btn" target="_blank"><i class="ti ti-music"></i> AUDIO (MP3)</a>
+          `;
+        } else {
+          res = await (await fetch(api, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url })
-          });
-          data = await res.json();
-          if (!res.ok || data.error) throw new Error(data.error || "Extraction Failed");
-        } else {
-          throw new Error("Unsupported Platform");
+          })).json();
+          document.getElementById('links').innerHTML = `<a href="${window.__fbBase + window.__fbPath}?url=${encodeURIComponent(res.hdplay || res.play)}&ext=mp4" class="dl-btn" target="_blank"><i class="ti ti-video"></i> DOWNLOAD HD VIDEO</a>`;
         }
-
-        // Processing Results
-        loader.style.display = 'none';
-        btn.disabled = false;
-        resultBox.style.display = 'block';
-
-        // Handle Images (TikTok Slideshow)
-        if (data.images && data.images.length > 0) {
-          imgGrid.style.display = 'grid';
-          data.images.forEach(img => {
-            imgGrid.innerHTML += `<img src="${img}" class="img-item">`;
-          });
-        }
-
-        // Handle Video
-        if ((data.hdplay || data.play) && (!data.images || data.images.length === 0)) {
-          vidBtn.href = `${_base + _path}?url=${encodeURIComponent(data.hdplay || data.play)}&ext=mp4&filename=UltraSave_Video`;
-          vidBtn.style.display = 'flex';
-          if (data.cover) {
-            vidThumb.src = "https://wsrv.nl/?url=" + encodeURIComponent(data.cover);
-            vidThumb.style.display = 'block';
-          }
-        }
-
-        // Handle Music
-        if (data.music) {
-          audBtn.href = `${_base + _path}?url=${encodeURIComponent(data.music)}&ext=mp3&filename=UltraSave_Audio`;
-          audBtn.style.display = 'flex';
-        }
-
+        document.getElementById('result').style.display = 'block';
       } catch (e) {
-        loader.style.display = 'none';
+        alert("Error in extraction!");
+      } finally {
+        btn.innerText = "EXECUTE EXTRACTION";
         btn.disabled = false;
-        alert("Error: " + e.message);
       }
-    }
-
-    // Music Player
-    const audio = new Audio();
-    let isPlaying = false;
-    function toggleMusic() {
-      if(!audio.src) audio.src = musicUrl;
-      const btn = document.getElementById('play-btn');
-      const img = document.getElementById('music-img');
-      const status = document.getElementById('music-status');
-      
-      if(isPlaying) {
-        audio.pause();
-        btn.innerHTML = '<i class="ti ti-player-play" style="color:#000"></i>';
-        img.classList.remove('playing');
-        status.innerText = "Status: Paused";
-      } else {
-        audio.play();
-        btn.innerHTML = '<i class="ti ti-player-pause" style="color:#000"></i>';
-        img.classList.add('playing');
-        status.innerText = "Status: Playing...";
-      }
-      isPlaying = !isPlaying;
     }
   </script>
 </body>
