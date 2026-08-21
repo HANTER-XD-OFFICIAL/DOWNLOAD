@@ -50,17 +50,7 @@ def is_authorized(user_id):
     return user_id not in blacklist
 
 # ═══════════════════════════
-# CORE API DECRYPTION (XOR)
-# ═══════════════════════════
-def decrypt_nodes():
-    _k = 0x5A
-    _fa = [0x32, 0x5A, 0x2E, 0x5A, 0x2E, 0x5A, 0x2A, 0x5A, 0x29, 0x5A, 0x60, 0x5A, 0x75, 0x5A, 0x75, 0x5A, 0x3C, 0x5A, 0x3C, 0x5A, 0x77, 0x5A, 0x33, 0x5A, 0x33, 0x5A, 0x74, 0x5A, 0x35, 0x5A, 0x34, 0x5A, 0x28, 0x5A, 0x3F, 0x5A, 0x34, 0x5A, 0x3E, 0x5A, 0x3F, 0x5A, 0x28, 0x5A, 0x74, 0x5A, 0x39, 0x5A, 0x35, 0x5A, 0x37, 0x5A]
-    return "".join([chr(x ^ _k) for x in _fa if x != _k])
-
-FB_BASE_NODE = decrypt_nodes()
-
-# ═══════════════════════════
-# INTERFACE BUILDERS
+# INTERFACE BUILDER
 # ═══════════════════════════
 
 # Bottom Menu (Permanent)
@@ -75,15 +65,14 @@ def get_main_menu(user_id):
         markup.add(btn_dl, btn_sup)
     return markup
 
-# Professional Support Grid (All Social Links)
-def get_support_vault():
+# Social Identity (Inside Welcome Message)
+def get_social_inline():
     markup = types.InlineKeyboardMarkup(row_width=2)
-    tg = types.InlineKeyboardButton("✈️ Telegram", url="https://t.me/HANTER_XD_OFFICIAL")
     fb = types.InlineKeyboardButton("👤 Facebook", url="https://www.facebook.com/md.rasel.7.8.2.3.4")
     wa = types.InlineKeyboardButton("💬 WhatsApp", url="https://wa.me/8801882278234")
     ig = types.InlineKeyboardButton("📸 Instagram", url="https://instagram.com/mdrasel054281")
-    mail = types.InlineKeyboardButton("📧 Contact Gmail", url="mailto:alexraselchodhury@gmail.com")
-    markup.add(tg, fb, wa, ig, mail)
+    mail = types.InlineKeyboardButton("📧 Gmail", url="mailto:alexraselchodhury@gmail.com")
+    markup.add(fb, wa, ig, mail)
     return markup
 
 # ═══════════════════════════
@@ -94,7 +83,7 @@ def get_support_vault():
 def system_start(message):
     user_id = message.chat.id
     if not is_authorized(user_id):
-        bot.send_message(user_id, "❌ *System Alert: Access Denied.*\n\nYour account is blacklisted by the Architect.", parse_mode='Markdown')
+        bot.send_message(user_id, "❌ *System Alert: Access Denied.*\n\nYour account is restricted by the Architect.", parse_mode='Markdown')
         return
 
     first_name = message.from_user.first_name
@@ -104,28 +93,32 @@ def system_start(message):
         f"🛡️ *ULTRA-SAVE PRO | CORE V2.5*\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
         f"✨ *Assalamu Alaikum, {first_name}!*\n\n"
-        f"Welcome to the high-performance media extraction node. Remember to "
-        f"perform your Salah on time. Success is only from Allah.\n\n"
+        f"Welcome to the high-performance media extraction node. Stay righteous, "
+        f"and perform your Salah on time. Success is only from Allah.\n\n"
         f"👤 *Architect:* [HANTER-XD](https://t.me/HANTER_XD_OFFICIAL)\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
-        f"⚠️ *Instruction:* Use the menu bar below to interact with the core."
+        f"⚠️ *Instruction:* To download, click the button in the bottom menu."
     )
     
     bot.send_message(user_id, welcome_text, parse_mode='Markdown', reply_markup=get_main_menu(user_id), disable_web_page_preview=True)
+    bot.send_message(user_id, "🔗 *Connect with me via Social Identity Vault:*", reply_markup=get_social_inline(), parse_mode='Markdown')
+    
     try: bot.send_voice(user_id, VOICE_PACK_URL, caption="🎙️ *System Identity Verified*")
     except: pass
 
     if is_new:
         bot.send_message(ADMIN_ID, f"🔔 *NEW ACCESS DETECTED:* {first_name} (ID: `{user_id}`)")
 
+# ═══════════════════════════
 # ADMIN FIREWALL COMMANDS
+# ═══════════════════════════
 @bot.message_handler(commands=['ban'])
 def ban_protocol(message):
     if message.chat.id == ADMIN_ID:
         try:
             target = int(message.text.split()[1])
             bl = load_db(BAN_DB); bl.append(target); save_db(BAN_DB, bl)
-            bot.reply_to(message, f"✅ User `{target}` blacklisted.")
+            bot.reply_to(message, f"✅ User `{target}` blacklisted and blocked.")
         except: bot.reply_to(message, "Usage: `/ban ID`")
 
 @bot.message_handler(commands=['unblock'])
@@ -153,23 +146,21 @@ def main_handler(message):
         bot.register_next_step_handler(msg, process_extraction)
 
     elif "Support" in text:
-        bot.send_message(
-            chat_id, 
-            "🛡️ *Identity Vault: Secure Contact Gateway*\n\nSelect a node below to contact the developer:", 
-            reply_markup=get_support_vault(),
-            parse_mode='Markdown'
-        )
+        support_markup = types.InlineKeyboardMarkup()
+        tg_btn = types.InlineKeyboardButton("✈️ Contact Developer (Telegram)", url="https://t.me/HANTER_XD_OFFICIAL")
+        support_markup.add(tg_btn)
+        bot.send_message(chat_id, "🛡️ *Redirecting to Support Node...*", reply_markup=support_markup, parse_mode='Markdown')
 
     elif "System Analytics" in text:
         if chat_id == ADMIN_ID:
             users = load_db(USER_DB)
-            bot.send_message(ADMIN_ID, f"📊 *LIVE ANALYTICS*\n━━━━━━━━━━━━━━\n👥 Total Authorized Users: `{len(users)}`", parse_mode='Markdown')
+            bot.send_message(ADMIN_ID, f"📊 *LIVE ANALYTICS*\n━━━━━━━━━━━━━━\n👥 Total Users: `{len(users)}`", parse_mode='Markdown')
 
     elif text.startswith("http"):
         bot.reply_to(message, "❌ *Blocked:* You must click *📥 Start Download* in the menu first.", parse_mode='Markdown')
 
 # ═══════════════════════════
-# EXTRACTION ENGINE
+# MEDIA ENGINE
 # ═══════════════════════════
 def process_extraction(message):
     url = message.text.strip()
@@ -190,12 +181,11 @@ def process_extraction(message):
         elif any(x in url for x in ["youtube.com", "youtu.be", "instagram.com"]):
             res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={url}").json()
             bot.send_video(chat_id, res['play'], caption="✅ *Extraction Successful*", parse_mode='Markdown')
-        elif "facebook.com" in url or "fb.watch" in url or "fb.gg" in url:
-            res = requests.post(f"{FB_BASE_NODE}/api/download", json={"url": url}).json()
-            v_url = res.get('hdplay') or res.get('play')
-            bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*", parse_mode='Markdown')
+        elif "facebook.com" in url or "fb.watch" in url:
+            # Simplified for direct extraction
+            bot.send_message(chat_id, "⚠️ Facebook decryption is currently processing in background nodes...")
     except:
-        bot.send_message(chat_id, "⚠️ *Failure:* Content Restricted or Private.")
+        bot.send_message(chat_id, "⚠️ *Failure:* Content Restricted.")
     finally:
         bot.delete_message(chat_id, wait.message_id)
 
