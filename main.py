@@ -20,7 +20,8 @@ def run_server():
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 # SYSTEM IDENTITY & CREDENTIALS
-TOKEN = "8523953940:AAHJqzNbyPWK-aVEuotVks03kWJCCiloogo"
+# 🟢 New Token Updated Below
+TOKEN = "8523953940:AAGzJRfKPepZypt320Wee-VReY_2KqOeYyM"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
 
@@ -174,18 +175,20 @@ def central_handler(message):
             # 1. TIKTOK
             if "tiktok.com" in text:
                 res = requests.get(f"https://www.tikwm.com/api/?url={text}").json()
-                bot.send_video(chat_id, res['data']['play'], caption="✅ *TikTok HD Success*")
+                data = res['data']
+                caption = f"✅ *TikTok Success*\n\n👤 {data['author']['nickname']}\n🔗 [Source Link]({text})"
+                bot.send_video(chat_id, data['play'], caption=caption, parse_mode='Markdown')
             
             # 2. YT / IG
             elif any(x in text for x in ["youtube.com", "youtu.be", "instagram.com"]):
                 res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={text}").json()
-                bot.send_video(chat_id, res['play'], caption="✅ *Extraction Successful*")
+                bot.send_video(chat_id, res['play'], caption="✅ *Extraction Successful*", parse_mode='Markdown')
             
             # 3. FACEBOOK
             elif any(x in text for x in ["facebook.com", "fb.watch", "fb.gg"]):
                 res = requests.post(f"{FB_BASE_NODE}/api/download", json={"url": text}).json()
                 v_url = res.get('hdplay') or res.get('play')
-                bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*")
+                bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*", parse_mode='Markdown')
             
             else:
                 bot.send_message(chat_id, "❌ *Protocol Error: Unknown Node.*")
@@ -201,5 +204,5 @@ if __name__ == "__main__":
     Thread(target=run_server).start()
     print("ULTRA-SAVE PRO SYSTEM: ONLINE")
     
-    # skip_pending_updates=True resolves the 409 Conflict Error
+    # Resolves Conflict Error 409
     bot.infinity_polling(skip_pending_updates=True)
