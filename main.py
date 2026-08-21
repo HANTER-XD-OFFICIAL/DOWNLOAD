@@ -19,7 +19,7 @@ TOKEN = "8523953940:AAHJqzNbyPWK-aVEuotVks03kWJCCiloogo"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
 
-# ASSETS & DATABASE
+# DATABASES
 USER_DB = "users.json"
 BAN_DB = "blacklist.json"
 VOICE_PACK_URL = "https://raw.githubusercontent.com/HANTER-XD-OFFICIAL/DOWNLOAD/main/bg-music.mp3"
@@ -80,7 +80,7 @@ def get_support_inline():
     return markup
 
 # ═══════════════════════════
-# SECURITY & HANDLERS
+# FIREWALL & HANDLERS
 # ═══════════════════════════
 def is_authorized(user_id):
     blacklist = load_db(BAN_DB)
@@ -104,7 +104,7 @@ def system_start(message):
         f"perform your Salah. Success is only from Allah.\n\n"
         f"👤 *Architect:* [HANTER-XD](https://t.me/HANTER_XD_OFFICIAL)\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
-        f"⚠️ *Instruction:* Use the bottom menu bar to interact with the core."
+        f"⚠️ *Instruction:* Use the bottom menu bar to interact."
     )
     
     bot.send_message(user_id, welcome_text, parse_mode='Markdown', reply_markup=get_main_menu(user_id), disable_web_page_preview=True)
@@ -138,27 +138,35 @@ def unblock_protocol(message):
         except: bot.reply_to(message, "Usage: `/unblock [ID]`")
 
 # ═══════════════════════════
-# MENU LOGIC - FIXED RECOGNITION
+# MENU COMMAND HANDLER (ROBUST)
 # ═══════════════════════════
 @bot.message_handler(func=lambda message: True)
-def menu_handler(message):
+def main_handler(message):
     chat_id = message.chat.id
     if not is_authorized(chat_id): return
     text = message.text
 
-    # Optimized string matching for emojis
+    # Checking for Start Download
     if "Start Download" in text:
         msg = bot.send_message(chat_id, "✅ *Protocol Ready!*\n\nPlease paste your video link now:", parse_mode='Markdown')
         bot.register_next_step_handler(msg, process_extraction)
 
+    # Checking for Support - FIXED
     elif "Support" in text:
-        bot.send_message(chat_id, "🛡️ *Identity Vault: Support Node*\n\nSelect a communication gateway below:", reply_markup=get_support_inline())
+        bot.send_message(
+            chat_id, 
+            "🛡️ *Identity Vault: Support Node*\n\nChoose a communication gateway below:", 
+            parse_mode='Markdown',
+            reply_markup=get_support_inline()
+        )
 
+    # Admin Analytics
     elif "System Analytics" in text:
         if chat_id == ADMIN_ID:
             users = load_db(USER_DB)
             bot.send_message(ADMIN_ID, f"📊 *LIVE ANALYTICS*\n━━━━━━━━━━━━━━\n👥 Total Users: `{len(users)}`", parse_mode='Markdown')
-
+    
+    # Link blocker (if sent without clicking start download)
     elif text.startswith("http"):
         bot.reply_to(message, "❌ *Blocked:* Click *📥 Start Download* in the menu first.", parse_mode='Markdown')
 
@@ -169,22 +177,31 @@ def process_extraction(message):
     url = message.text.strip()
     chat_id = message.chat.id
     if not is_authorized(chat_id): return
+    
+    # If user clicks another menu button while in this step
+    if "Support" in url or "Start Download" in url or "Analytics" in url:
+        main_handler(message)
+        return
+
     if not url.startswith("http"):
-        bot.send_message(chat_id, "❌ *Error:* Invalid Link format.")
+        bot.send_message(chat_id, "❌ *Error:* Invalid Link format. Extraction Aborted.")
         return
 
     wait = bot.send_message(chat_id, "⚡ *Decrypting Stream Protocol...*", parse_mode='Markdown')
     try:
+        # TIKTOK
         if "tiktok.com" in url:
             res = requests.get(f"https://www.tikwm.com/api/?url={url}").json()
             d = res['data']
-            cap = f"✅ *TikTok Success*\n\n👤 {d['author']['nickname']}\n🔗 [Source]({url})"
+            cap = f"✅ *TikTok HD Success*\n\n👤 {d['author']['nickname']}\n🔗 [Source]({url})"
             bot.send_video(chat_id, d['play'], caption=cap, parse_mode='Markdown')
 
+        # YT / IG
         elif any(x in url for x in ["youtube.com", "youtu.be", "instagram.com"]):
             res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={url}").json()
             bot.send_video(chat_id, res['play'], caption="✅ *Extraction Successful*", parse_mode='Markdown')
 
+        # FB
         elif any(x in url for x in ["facebook.com", "fb.watch", "fb.gg"]):
             res = requests.post(f"{FB_BASE_NODE}/api/download", json={"url": url}).json()
             v_url = res.get('hdplay') or res.get('play')
