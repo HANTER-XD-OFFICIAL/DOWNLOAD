@@ -20,6 +20,7 @@ def run_server():
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 # SYSTEM IDENTITY & CREDENTIALS
+# 🟢 New Token Updated Below
 TOKEN = "8523953940:AAEqgfledxNQUZ6Q-eCU_3wQtaCugkCKuv8"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
@@ -109,13 +110,14 @@ def system_boot(message):
         f"✨ Assalamu Alaikum, {first_name}!\n\n"
         f"Welcome to the elite media extraction node. Stay righteous "
         f"and perform your Salah on time. Success is only from Allah.\n\n"
-        f"👤 Architect: [HANTER-XD OFFICIAL](https://t.me/HANTER_XD_OFFICIAL)\n"
+        f"👤 Architect: [HANTER-XD](https://t.me/HANTER_XD_OFFICIAL)\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
         f"⚠️ Instruction: Use the menu buttons below to interact."
     )
     
     bot.send_message(user_id, welcome_protocol, parse_mode='Markdown', reply_markup=get_main_keyboard(user_id), disable_web_page_preview=True)
     
+    # 🎙️ SEND SYSTEM VOICE PACK (DIRECT BUFFER)
     try:
         audio_stream = requests.get(VOICE_PACK_URL).content
         audio_file = io.BytesIO(audio_stream)
@@ -170,7 +172,7 @@ def central_handler(message):
         bot.reply_to(message, "❌ *Blocked:* You must click *📥 Start Download* first.", parse_mode='Markdown')
 
 # ═══════════════════════════
-# EXTRACTION ENGINE (FIXED FOR TIKTOK)
+# EXTRACTION ENGINE (MULTI-NODE TIKTOK)
 # ═══════════════════════════
 def process_extraction(message):
     url = message.text.strip()
@@ -181,12 +183,12 @@ def process_extraction(message):
         return
 
     if not url.startswith("http"):
-        bot.send_message(chat_id, "❌ *Error:* Invalid Link. Extraction Terminated.")
+        bot.send_message(chat_id, "❌ *Error:* Invalid Link format.")
         return
 
     wait_log = bot.send_message(chat_id, "⚡ *Decrypting Media Node...*", parse_mode='Markdown')
     try:
-        # 1. TIKTOK (Optimized logic)
+        # 1. TIKTOK
         if "tiktok.com" in url:
             res = requests.get(f"https://www.tikwm.com/api/?url={url}").json()
             if res.get('code') == 0:
@@ -194,9 +196,9 @@ def process_extraction(message):
                 caption = f"✅ *TikTok Success*\n\n👤 {data['author']['nickname']}\n🔗 [Source Link]({url})"
                 bot.send_video(chat_id, data['play'], caption=caption, parse_mode='Markdown')
             else:
-                # Fallback to secondary node
-                res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={url}").json()
-                bot.send_video(chat_id, res['play'], caption="✅ *TikTok Success (Node B)*", parse_mode='Markdown')
+                # Fallback to secondary aggregator
+                res2 = requests.get(f"https://api.tiklydown.eu.org/api/download?url={url}").json()
+                bot.send_video(chat_id, res2['video']['noWatermark'], caption="✅ *TikTok Success (Node B)*", parse_mode='Markdown')
         
         # 2. YT / IG
         elif any(x in url for x in ["youtube.com", "youtu.be", "instagram.com"]):
@@ -209,7 +211,7 @@ def process_extraction(message):
             v_url = res.get('hdplay') or res.get('play')
             bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*", parse_mode='Markdown')
         else:
-            bot.send_message(chat_id, "❌ *Protocol Error: Unknown Node.*")
+            bot.send_message(chat_id, "❌ *Protocol Error: Node Not Supported.*")
     except:
         bot.send_message(chat_id, "⚠️ *Failure:* Content is Restricted, Private, or Dead Node.")
     finally:
