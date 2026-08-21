@@ -36,58 +36,52 @@
       --txt: #e8e8f0;
       --txm: #8888aa;
       --txd: #44445a;
-      --ease: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Rajdhani', sans-serif; background: var(--bg0); color: var(--txt); overflow-x: hidden; min-height: 100vh; }
-    a { text-decoration: none; color: inherit; }
     
-    /* SCANLINE ANIMATION */
+    /* SCANLINE */
     .scanline { position: fixed; inset: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--ag), transparent); z-index: 9; pointer-events: none; animation: scanDown 8s linear infinite; }
     @keyframes scanDown { 0% { top: -5px; } 100% { top: 100vh; } }
     #pCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
-    /* SYSTEM PRELOADER */
     #preloader { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s ease; }
     #preloader.out { opacity: 0; visibility: hidden; }
-    .pl-logo { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 900; color: #fff; letter-spacing: 5px; text-transform: uppercase; }
-    .pl-logo span { color: var(--a); text-shadow: 0 0 20px var(--a); }
 
-    /* LAYOUT WRAPPER */
     .wrap { width: 100%; max-width: 430px; margin: 0 auto; padding: 20px 15px 100px; position: relative; z-index: 2; }
     .card { background: var(--bg1); border: 1px solid var(--brd); border-radius: 16px; padding: 25px 20px; margin-bottom: 15px; position: relative; overflow: hidden; }
     .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--a), transparent); }
 
     .logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-    .logo-img { width: 45px; height: 45px; border-radius: 12px; border: 1px solid var(--brda); box-shadow: 0 0 15px var(--ad); object-fit: cover; }
+    .logo-img { width: 45px; height: 45px; border-radius: 12px; border: 1px solid var(--brda); object-fit: cover; }
 
-    /* INPUT STYLING */
     .input-wrap { position: relative; margin: 20px 0; }
     .url-input { width: 100%; padding: 15px 15px 15px 45px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--brd); color: #fff; outline: none; transition: 0.3s; font-family: 'Rajdhani'; }
     .url-input:focus { border-color: var(--a); box-shadow: 0 0 15px var(--ad); }
     .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--a); }
 
-    /* ACTION BUTTON */
-    .dl-btn { width: 100%; padding: 16px; border-radius: 10px; background: var(--a); color: #000; font-family: 'Orbitron', sans-serif; font-weight: 700; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 0 20px var(--ad); letter-spacing: 1px; }
-    .dl-btn:active { transform: scale(0.98); background: #fff; }
+    .dl-btn { width: 100%; padding: 16px; border-radius: 10px; background: var(--a); color: #000; font-family: 'Orbitron', sans-serif; font-weight: 700; border: none; cursor: pointer; transition: 0.3s; letter-spacing: 1px; }
+    .dl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* FLOATING MUSIC PLAYER */
-    #musicNotif { position: fixed; bottom: 85px; left: 15px; right: 15px; background: rgba(10,12,18,0.95); border: 1px solid var(--brda); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 12px; transform: translateY(200px); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1000; backdrop-filter: blur(10px); }
+    /* RESULTS AREA */
+    #result-box { display: none; margin-top: 20px; border-top: 1px solid var(--brd); padding-top: 20px; }
+    .media-preview { width: 100%; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--brda); }
+    .download-link { display: flex; align-items: center; gap: 10px; background: var(--ad); border: 1px solid var(--brda); padding: 12px; border-radius: 10px; color: var(--a); text-decoration: none; margin-bottom: 10px; font-weight: bold; transition: 0.3s; }
+    .download-link:hover { background: var(--a); color: #000; }
+
+    /* STATUS BOX */
+    .status-msg { display: none; margin-top: 15px; font-size: 0.8rem; font-family: 'Share Tech Mono'; text-align: center; color: var(--a); }
+
+    /* MUSIC PLAYER */
+    #musicNotif { position: fixed; bottom: 85px; left: 15px; right: 15px; background: rgba(10,12,18,0.95); border: 1px solid var(--brda); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 12px; transform: translateY(200px); transition: 0.5s; z-index: 1000; backdrop-filter: blur(10px); }
     #musicNotif.show { transform: translateY(0); }
-    .mn-img { width: 50px; height: 50px; border-radius: 12px; animation: spin 4s linear infinite paused; object-fit: cover; border: 1px solid var(--brda); }
+    .mn-img { width: 50px; height: 50px; border-radius: 12px; animation: spin 4s linear infinite paused; border: 1px solid var(--brda); }
     .mn-img.playing { animation-play-state: running; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
 
-    /* BOTTOM NAVIGATION */
-    .bnav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,6,10,0.95); border-top: 1px solid var(--brd); display: flex; justify-content: space-around; padding: 12px; z-index: 100; backdrop-filter: blur(10px); }
-    .bnav-item { color: var(--txm); font-size: 20px; cursor: pointer; transition: 0.3s; }
-    .bnav-item.active { color: var(--a); text-shadow: 0 0 10px var(--a); }
-
-    .stat-box { display: flex; justify-content: space-around; text-align: center; }
-    .stat-item b { color: var(--a); display: block; font-size: 1.1rem; }
-    .stat-item small { color: var(--txm); text-transform: uppercase; letter-spacing: 1px; font-size: 0.6rem; }
-
+    .bnav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,6,10,0.95); border-top: 1px solid var(--brd); display: flex; justify-content: space-around; padding: 12px; z-index: 100; }
+    .bnav-item { color: var(--txm); font-size: 20px; }
   </style>
 </head>
 
@@ -95,67 +89,60 @@
   <div class="scanline"></div>
   <canvas id="pCanvas"></canvas>
 
-  <!-- LOADING OVERLAY -->
   <div id="preloader">
-    <div class="pl-logo" id="pl-name">ULTRA-<span>SAVE</span></div>
-    <div style="color:var(--a); font-family:'Share Tech Mono'; margin-top:10px; letter-spacing: 2px;" id="pl-pct">0%</div>
+    <div class="pl-logo">ULTRA-<span>SAVE</span></div>
+    <div style="color:var(--a); font-family:'Share Tech Mono'; margin-top:10px;" id="pl-pct">0%</div>
   </div>
 
   <div class="wrap">
-    <!-- HEADER SECTION -->
     <div class="logo-row">
-      <img src="" id="main-logo" class="logo-img" alt="System Icon">
+      <img src="" id="main-logo" class="logo-img" alt="Icon">
       <div style="font-family:'Orbitron'; font-weight:900; letter-spacing:2px; font-size:1.2rem;">ULTRA-<span style="color:var(--a)">SAVE</span></div>
     </div>
 
-    <!-- MAIN DOWNLOAD CARD -->
     <div class="card">
-      <div style="font-family:'Share Tech Mono'; color:var(--a); font-size:0.7rem; letter-spacing:3px; margin-bottom:10px;">// CORE_SYSTEM_READY</div>
+      <div style="font-family:'Share Tech Mono'; color:var(--a); font-size:0.7rem; letter-spacing:3px; margin-bottom:10px;">// SYSTEM_READY</div>
       <h2 style="font-family:'Orbitron'; margin-bottom:10px; font-size: 1.4rem;">Media Downloader</h2>
-      <p style="color:var(--txm); font-size:0.9rem; margin-bottom:20px; line-height: 1.4;">Premium tool to download TikTok and Facebook media in HD quality without watermarks.</p>
       
       <div class="input-wrap">
         <i class="ti ti-link input-icon"></i>
-        <input type="text" id="url" class="url-input" placeholder="Paste media link here...">
+        <input type="text" id="url" class="url-input" placeholder="Paste TikTok/FB link here...">
       </div>
       
-      <button class="dl-btn" onclick="processDownload()">FETCH CONTENT</button>
-    </div>
+      <button class="dl-btn" id="dl-btn" onclick="processDownload()">FETCH CONTENT</button>
+      
+      <div id="status" class="status-msg">PROCESSING...</div>
 
-    <!-- SYSTEM STATS CARD -->
-    <div class="card">
-       <div class="stat-box">
-         <div class="stat-item"><b>ULTRA HD</b><small>Resolution</small></div>
-         <div class="stat-item"><b>CLEAN</b><small>No Watermark</small></div>
-         <div class="stat-item"><b>UNLIMITED</b><small>Daily Access</small></div>
-       </div>
+      <!-- Result Box -->
+      <div id="result-box">
+        <img id="preview-img" class="media-preview" src="">
+        <a id="video-link" class="download-link" href="#" target="_blank"><i class="ti ti-video"></i> DOWNLOAD VIDEO (HD)</a>
+        <a id="audio-link" class="download-link" href="#" target="_blank"><i class="ti ti-music"></i> DOWNLOAD AUDIO (MP3)</a>
+      </div>
     </div>
   </div>
 
-  <!-- FLOATING MEDIA NOTIFICATION -->
   <div id="musicNotif">
     <img src="" id="music-img" class="mn-img">
     <div style="flex:1">
-      <div style="font-size:0.8rem; font-weight:bold; letter-spacing: 1px;">SYSTEM_AUDIO.EXE</div>
-      <div style="font-size:0.6rem; color:var(--txm); text-transform: uppercase;" id="music-status">Status: Paused</div>
+      <div style="font-size:0.8rem; font-weight:bold;">SYSTEM_AUDIO.EXE</div>
+      <div style="font-size:0.6rem; color:var(--txm);" id="music-status">Status: Paused</div>
     </div>
-    <button onclick="toggleMusic()" id="play-btn" style="background:var(--a); border:none; width:38px; height:38px; border-radius:50%; cursor:pointer; display: flex; align-items: center; justify-content: center;"><i class="ti ti-player-play" style="font-size: 1.2rem; color: #000;"></i></button>
+    <button onclick="toggleMusic()" id="play-btn" style="background:var(--a); border:none; width:38px; height:38px; border-radius:50%;"><i class="ti ti-player-play"></i></button>
   </div>
 
-  <!-- NAVIGATION BAR -->
   <nav class="bnav">
-    <i class="ti ti-smart-home bnav-item active"></i>
+    <i class="ti ti-smart-home bnav-item" style="color:var(--a)"></i>
     <i class="ti ti-brand-tiktok bnav-item"></i>
     <i class="ti ti-brand-facebook bnav-item"></i>
-    <i class="ti ti-settings-automation bnav-item"></i>
+    <i class="ti ti-settings bnav-item"></i>
   </nav>
 
   <script>
-    // CORE SYSTEM LOGIC
     let musicUrl = "";
     let profilePic = "";
 
-    // FETCH CONFIG FROM COMMENTS
+    // Config initialization
     (function() {
       const comments = document.head.childNodes;
       comments.forEach(node => {
@@ -165,76 +152,92 @@
           if(content.includes('PROFILE_PIC:')) profilePic = content.split('PROFILE_PIC:')[1].trim();
         }
       });
-      // Set images from fetched config
       document.getElementById('main-logo').src = profilePic;
       document.getElementById('music-img').src = profilePic;
     })();
 
-    // INITIALIZATION ANIMATION
+    // Preloader
     let pct = 0;
-    const pctEl = document.getElementById('pl-pct');
     const loader = setInterval(() => {
-      pct += Math.floor(Math.random() * 8) + 2;
+      pct += 5;
       if(pct >= 100) {
-        pct = 100;
         clearInterval(loader);
         document.getElementById('preloader').classList.add('out');
         setTimeout(() => document.getElementById('musicNotif').classList.add('show'), 1500);
       }
-      pctEl.innerText = "INITIALIZING: " + pct + "%";
-    }, 80);
+      document.getElementById('pl-pct').innerText = "LOAD: " + pct + "%";
+    }, 50);
 
-    // AUDIO CONTROL SYSTEM
+    // Download Engine
+    async function processDownload() {
+      const urlInput = document.getElementById('url').value;
+      const btn = document.getElementById('dl-btn');
+      const status = document.getElementById('status');
+      const resultBox = document.getElementById('result-box');
+
+      if (!urlInput) { alert("Please paste a link first!"); return; }
+
+      btn.disabled = true;
+      status.style.display = "block";
+      resultBox.style.display = "none";
+
+      try {
+        // TikTok API (Example using TikWM)
+        const response = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(urlInput)}`);
+        const resData = await response.json();
+
+        if (resData.code === 0) {
+          const data = resData.data;
+          document.getElementById('preview-img').src = data.cover;
+          document.getElementById('video-link').href = data.play;
+          document.getElementById('audio-link').href = data.music;
+          
+          status.style.display = "none";
+          resultBox.style.display = "block";
+        } else {
+          // If TikTok API fails, check for FB or show error
+          status.innerText = "ERROR: LINK NOT SUPPORTED OR PRIVATE";
+        }
+      } catch (err) {
+        status.innerText = "SYSTEM ERROR: API UNREACHABLE";
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // Music
     const audio = new Audio();
     let isPlaying = false;
     function toggleMusic() {
-      const btn = document.getElementById('play-btn');
-      const img = document.getElementById('music-img');
-      const status = document.getElementById('music-status');
-      
       if(!audio.src) audio.src = musicUrl;
-
       if(isPlaying) {
         audio.pause();
-        btn.innerHTML = '<i class="ti ti-player-play" style="color:#000"></i>';
-        img.classList.remove('playing');
-        status.innerText = "Status: Paused";
+        document.getElementById('play-btn').innerHTML = '<i class="ti ti-player-play"></i>';
+        document.getElementById('music-img').classList.remove('playing');
       } else {
         audio.play();
-        btn.innerHTML = '<i class="ti ti-player-pause" style="color:#000"></i>';
-        img.classList.add('playing');
-        status.innerText = "Status: Playing...";
+        document.getElementById('play-btn').innerHTML = '<i class="ti ti-player-pause"></i>';
+        document.getElementById('music-img').classList.add('playing');
       }
       isPlaying = !isPlaying;
     }
 
-    // AMBIENT BACKGROUND PARTICLES
+    // Particles
     const canvas = document.getElementById('pCanvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    
-    function drawParticles() {
+    function draw() {
       ctx.clearRect(0,0,canvas.width, canvas.height);
       ctx.fillStyle = "rgba(0, 229, 255, 0.05)";
-      for(let i=0; i<40; i++) {
+      for(let i=0; i<30; i++) {
         ctx.beginPath();
-        ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, 0.8, 0, Math.PI*2);
+        ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, 1, 0, Math.PI*2);
         ctx.fill();
       }
-      requestAnimationFrame(drawParticles);
+      requestAnimationFrame(draw);
     }
-    drawParticles();
-
-    function processDownload() {
-      const url = document.getElementById('url').value;
-      if(!url) {
-        alert("Please enter a valid URL!");
-        return;
-      }
-      alert("System: Analyzing link... Accessing API servers.");
-    }
+    draw();
   </script>
 </body>
-
 </html>
