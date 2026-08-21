@@ -20,7 +20,6 @@ def run_server():
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 # SYSTEM IDENTITY & CREDENTIALS
-# 🟢 New Token Updated Below
 TOKEN = "8523953940:AAEqgfledxNQUZ6Q-eCU_3wQtaCugkCKuv8"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
@@ -58,7 +57,7 @@ def is_authorized(user_id):
     return user_id not in blacklist
 
 # ═══════════════════════════
-# CORE API DECRYPTION (XOR)
+# CORE API DECRYPTION (XOR - Matches HTML)
 # ═══════════════════════════
 def decrypt_api_nodes():
     _k = 0x5A
@@ -172,7 +171,7 @@ def central_handler(message):
         bot.reply_to(message, "❌ *Blocked:* You must click *📥 Start Download* first.", parse_mode='Markdown')
 
 # ═══════════════════════════
-# EXTRACTION ENGINE (MULTI-NODE TIKTOK)
+# EXTRACTION ENGINE (SYNCED WITH HTML API)
 # ═══════════════════════════
 def process_extraction(message):
     url = message.text.strip()
@@ -188,22 +187,32 @@ def process_extraction(message):
 
     wait_log = bot.send_message(chat_id, "⚡ *Decrypting Media Node...*", parse_mode='Markdown')
     try:
-        # 1. TIKTOK
+        # 1. TIKTOK (Same TikWM API as HTML Core)
         if "tiktok.com" in url:
             res = requests.get(f"https://www.tikwm.com/api/?url={url}").json()
             if res.get('code') == 0:
                 data = res['data']
-                caption = f"✅ *TikTok Success*\n\n👤 {data['author']['nickname']}\n🔗 [Source Link]({url})"
+                caption = (
+                    f"✅ *TikTok HD Extraction Successful*\n\n"
+                    f"👤 *Author:* {data['author']['nickname']}\n"
+                    f"📝 *Title:* {data.get('title', 'N/A')}\n"
+                    f"🔗 [Source Link]({url})\n\n"
+                    f"_Powered by HANTER-XD Core_"
+                )
+                # Sending Video
                 bot.send_video(chat_id, data['play'], caption=caption, parse_mode='Markdown')
+                # Sending Audio (Synced logic)
+                if data.get('music'):
+                    bot.send_audio(chat_id, data['music'], caption="🎵 *Music Pack Extracted*")
             else:
-                # Fallback to secondary aggregator
-                res2 = requests.get(f"https://api.tiklydown.eu.org/api/download?url={url}").json()
-                bot.send_video(chat_id, res2['video']['noWatermark'], caption="✅ *TikTok Success (Node B)*", parse_mode='Markdown')
+                raise Exception("API rejected request")
         
-        # 2. YT / IG
+        # 2. YT / IG 
         elif any(x in url for x in ["youtube.com", "youtu.be", "instagram.com"]):
             res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={url}").json()
             bot.send_video(chat_id, res['play'], caption="✅ *Extraction Successful*", parse_mode='Markdown')
+            if res.get('music'):
+                bot.send_audio(chat_id, res['music'])
         
         # 3. FACEBOOK
         elif any(x in url for x in ["facebook.com", "fb.watch", "fb.gg"]):
@@ -211,9 +220,10 @@ def process_extraction(message):
             v_url = res.get('hdplay') or res.get('play')
             bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*", parse_mode='Markdown')
         else:
-            bot.send_message(chat_id, "❌ *Protocol Error: Node Not Supported.*")
+            bot.send_message(chat_id, "❌ *Protocol Error: Node Not Recognized.*")
+
     except:
-        bot.send_message(chat_id, "⚠️ *Failure:* Content is Restricted, Private, or Dead Node.")
+        bot.send_message(chat_id, "⚠️ *Failure:* Link Private, Dead, or Restricted.")
     finally:
         bot.delete_message(chat_id, wait_log.message_id)
 
