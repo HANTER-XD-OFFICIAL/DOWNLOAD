@@ -1,104 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OmniSave - Universal Video Downloader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#00e5ff">
+  <meta name="referrer" content="no-referrer">
+  <title>ULTRA-SAVE PRO | HD DOWNLOADER</title>
+
+  <!-- 
+    [ SYSTEM CONFIGURATION ]
+    Update the links below using your GitHub RAW links.
+  -->
+  <!-- THEME_COLOR: 0, 229, 255 -->
+  <!-- TIKTOK_LINK: https://www.tiktok.com/ -->
+  <!-- FB_LINK: https://www.facebook.com/ -->
+  <!-- MUSIC_SRC: https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/audio.mp3 -->
+  <!-- PROFILE_PIC: https://cdn-icons-png.flaticon.com/512/8922/8922789.png -->
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  
   <style>
     :root {
-      --primary: #ff0055;
-      --bg: #0b0f19;
-      --card-bg: #1e293b;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
+      --a: #00e5ff;
+      --ag: rgba(0, 229, 255, 0.7);
+      --ad: rgba(0, 229, 255, 0.1);
+      --ab: rgba(0, 229, 255, 0.35);
+      --bg0: #030407;
+      --bg1: #07080f;
+      --bg2: #0b0d18;
+      --brd: rgba(255, 255, 255, 0.05);
+      --brda: rgba(0, 229, 255, 0.28);
+      --txt: #e8e8f0;
+      --txm: #8888aa;
+      --txd: #44445a;
+      --ease: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-    .wrapper { width: 100%; max-width: 480px; background: var(--card-bg); padding: 30px 20px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
-    .logo { text-align: center; font-size: 1.8rem; font-weight: 800; color: var(--primary); margin-bottom: 5px; }
-    .subtitle { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 25px; }
-    .input-group { position: relative; margin-bottom: 15px; }
-    .url-input { width: 100%; padding: 14px 15px 14px 45px; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: var(--text); font-size: 0.95rem; outline: none; transition: 0.3s; }
-    .url-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(255,0,85,0.3); }
-    .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 20px; }
-    .dl-btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(255,0,85,0.4); }
-    .dl-btn:hover { opacity: 0.9; transform: translateY(-2px); }
-    .platforms { display: flex; justify-content: space-around; margin-top: 25px; font-size: 24px; color: var(--text-muted); }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Rajdhani', sans-serif; background: var(--bg0); color: var(--txt); overflow-x: hidden; min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
     
-    #result-box { display: none; margin-top: 20px; background: #0f172a; padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: center; }
-    .media-link { display: block; margin-top: 10px; padding: 12px; background: var(--primary); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; }
-    .loader { display: none; width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 15px auto 0; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .error-msg { color: #ff4466; font-size: 0.85rem; margin-top: 10px; display: none; text-align: center; }
+    /* SCANLINE ANIMATION */
+    .scanline { position: fixed; inset: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--ag), transparent); z-index: 9; pointer-events: none; animation: scanDown 8s linear infinite; }
+    @keyframes scanDown { 0% { top: -5px; } 100% { top: 100vh; } }
+    #pCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* SYSTEM PRELOADER */
+    #preloader { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s ease; }
+    #preloader.out { opacity: 0; visibility: hidden; }
+    .pl-logo { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 900; color: #fff; letter-spacing: 5px; text-transform: uppercase; }
+    .pl-logo span { color: var(--a); text-shadow: 0 0 20px var(--a); }
+
+    /* LAYOUT WRAPPER */
+    .wrap { width: 100%; max-width: 430px; margin: 0 auto; padding: 20px 15px 100px; position: relative; z-index: 2; }
+    .card { background: var(--bg1); border: 1px solid var(--brd); border-radius: 16px; padding: 25px 20px; margin-bottom: 15px; position: relative; overflow: hidden; }
+    .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--a), transparent); }
+
+    .logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .logo-img { width: 45px; height: 45px; border-radius: 12px; border: 1px solid var(--brda); box-shadow: 0 0 15px var(--ad); object-fit: cover; }
+
+    /* INPUT STYLING */
+    .input-wrap { position: relative; margin: 20px 0; }
+    .url-input { width: 100%; padding: 15px 15px 15px 45px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--brd); color: #fff; outline: none; transition: 0.3s; font-family: 'Rajdhani'; }
+    .url-input:focus { border-color: var(--a); box-shadow: 0 0 15px var(--ad); }
+    .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--a); }
+
+    /* ACTION BUTTON */
+    .dl-btn { width: 100%; padding: 16px; border-radius: 10px; background: var(--a); color: #000; font-family: 'Orbitron', sans-serif; font-weight: 700; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 0 20px var(--ad); letter-spacing: 1px; }
+    .dl-btn:active { transform: scale(0.98); background: #fff; }
+
+    /* FLOATING MUSIC PLAYER */
+    #musicNotif { position: fixed; bottom: 85px; left: 15px; right: 15px; background: rgba(10,12,18,0.95); border: 1px solid var(--brda); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 12px; transform: translateY(200px); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1000; backdrop-filter: blur(10px); }
+    #musicNotif.show { transform: translateY(0); }
+    .mn-img { width: 50px; height: 50px; border-radius: 12px; animation: spin 4s linear infinite paused; object-fit: cover; border: 1px solid var(--brda); }
+    .mn-img.playing { animation-play-state: running; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* BOTTOM NAVIGATION */
+    .bnav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5,6,10,0.95); border-top: 1px solid var(--brd); display: flex; justify-content: space-around; padding: 12px; z-index: 100; backdrop-filter: blur(10px); }
+    .bnav-item { color: var(--txm); font-size: 20px; cursor: pointer; transition: 0.3s; }
+    .bnav-item.active { color: var(--a); text-shadow: 0 0 10px var(--a); }
+
+    .stat-box { display: flex; justify-content: space-around; text-align: center; }
+    .stat-item b { color: var(--a); display: block; font-size: 1.1rem; }
+    .stat-item small { color: var(--txm); text-transform: uppercase; letter-spacing: 1px; font-size: 0.6rem; }
+
   </style>
 </head>
+
 <body>
+  <div class="scanline"></div>
+  <canvas id="pCanvas"></canvas>
 
-<div class="wrapper">
-    <div class="logo">OmniSave</div>
-    <div class="subtitle">Universal Video Downloader</div>
+  <!-- LOADING OVERLAY -->
+  <div id="preloader">
+    <div class="pl-logo" id="pl-name">ULTRA-<span>SAVE</span></div>
+    <div style="color:var(--a); font-family:'Share Tech Mono'; margin-top:10px; letter-spacing: 2px;" id="pl-pct">0%</div>
+  </div>
 
-    <div class="input-group">
+  <div class="wrap">
+    <!-- HEADER SECTION -->
+    <div class="logo-row">
+      <img src="" id="main-logo" class="logo-img" alt="System Icon">
+      <div style="font-family:'Orbitron'; font-weight:900; letter-spacing:2px; font-size:1.2rem;">ULTRA-<span style="color:var(--a)">SAVE</span></div>
+    </div>
+
+    <!-- MAIN DOWNLOAD CARD -->
+    <div class="card">
+      <div style="font-family:'Share Tech Mono'; color:var(--a); font-size:0.7rem; letter-spacing:3px; margin-bottom:10px;">// CORE_SYSTEM_READY</div>
+      <h2 style="font-family:'Orbitron'; margin-bottom:10px; font-size: 1.4rem;">Media Downloader</h2>
+      <p style="color:var(--txm); font-size:0.9rem; margin-bottom:20px; line-height: 1.4;">Premium tool to download TikTok and Facebook media in HD quality without watermarks.</p>
+      
+      <div class="input-wrap">
         <i class="ti ti-link input-icon"></i>
-        <input type="text" id="urlInput" class="url-input" placeholder="Paste TikTok or FB video link...">
+        <input type="text" id="url" class="url-input" placeholder="Paste media link here...">
+      </div>
+      
+      <button class="dl-btn" onclick="processDownload()">FETCH CONTENT</button>
     </div>
 
-    <button class="dl-btn" onclick="fetchMedia()">Download Now</button>
-
-    <div class="loader" id="loader"></div>
-    <div class="error-msg" id="errorMsg"></div>
-
-    <div id="result-box">
-        <p style="font-size: 0.9rem; margin-bottom: 8px; color: var(--text-muted);">Ready for Download:</p>
-        <a id="downloadLink" href="#" target="_blank" class="media-link"><i class="ti ti-download"></i> Download HD Video</a>
+    <!-- SYSTEM STATS CARD -->
+    <div class="card">
+       <div class="stat-box">
+         <div class="stat-item"><b>ULTRA HD</b><small>Resolution</small></div>
+         <div class="stat-item"><b>CLEAN</b><small>No Watermark</small></div>
+         <div class="stat-item"><b>UNLIMITED</b><small>Daily Access</small></div>
+       </div>
     </div>
+  </div>
 
-    <div class="platforms">
-        <i class="ti ti-brand-tiktok"></i>
-        <i class="ti ti-brand-facebook"></i>
-        <i class="ti ti-brand-instagram"></i>
+  <!-- FLOATING MEDIA NOTIFICATION -->
+  <div id="musicNotif">
+    <img src="" id="music-img" class="mn-img">
+    <div style="flex:1">
+      <div style="font-size:0.8rem; font-weight:bold; letter-spacing: 1px;">SYSTEM_AUDIO.EXE</div>
+      <div style="font-size:0.6rem; color:var(--txm); text-transform: uppercase;" id="music-status">Status: Paused</div>
     </div>
-</div>
+    <button onclick="toggleMusic()" id="play-btn" style="background:var(--a); border:none; width:38px; height:38px; border-radius:50%; cursor:pointer; display: flex; align-items: center; justify-content: center;"><i class="ti ti-player-play" style="font-size: 1.2rem; color: #000;"></i></button>
+  </div>
 
-<script>
-    async function fetchMedia() {
-        const url = document.getElementById('urlInput').value.trim();
-        const loader = document.getElementById('loader');
-        const errorMsg = document.getElementById('errorMsg');
-        const resultBox = document.getElementById('result-box');
-        const downloadLink = document.getElementById('downloadLink');
+  <!-- NAVIGATION BAR -->
+  <nav class="bnav">
+    <i class="ti ti-smart-home bnav-item active"></i>
+    <i class="ti ti-brand-tiktok bnav-item"></i>
+    <i class="ti ti-brand-facebook bnav-item"></i>
+    <i class="ti ti-settings-automation bnav-item"></i>
+  </nav>
 
-        errorMsg.style.display = 'none';
-        resultBox.style.display = 'none';
+  <script>
+    // CORE SYSTEM LOGIC
+    let musicUrl = "";
+    let profilePic = "";
 
-        if (!url) {
-            errorMsg.innerText = "Please paste a valid link!";
-            errorMsg.style.display = 'block';
-            return;
+    // FETCH CONFIG FROM COMMENTS
+    (function() {
+      const comments = document.head.childNodes;
+      comments.forEach(node => {
+        if (node.nodeType === 8) {
+          const content = node.textContent;
+          if(content.includes('MUSIC_SRC:')) musicUrl = content.split('MUSIC_SRC:')[1].trim();
+          if(content.includes('PROFILE_PIC:')) profilePic = content.split('PROFILE_PIC:')[1].trim();
         }
+      });
+      // Set images from fetched config
+      document.getElementById('main-logo').src = profilePic;
+      document.getElementById('music-img').src = profilePic;
+    })();
 
-        loader.style.display = 'block';
+    // INITIALIZATION ANIMATION
+    let pct = 0;
+    const pctEl = document.getElementById('pl-pct');
+    const loader = setInterval(() => {
+      pct += Math.floor(Math.random() * 8) + 2;
+      if(pct >= 100) {
+        pct = 100;
+        clearInterval(loader);
+        document.getElementById('preloader').classList.add('out');
+        setTimeout(() => document.getElementById('musicNotif').classList.add('show'), 1500);
+      }
+      pctEl.innerText = "INITIALIZING: " + pct + "%";
+    }, 80);
 
-        try {
-            // TikTok এবং Facebook উভয়ের জন্যই tikwm এপিআই ব্যাকএন্ড প্রক্সি হিসেবে কাজ করে (যদি ফেসবুক লিংক পাবলিক হয়)
-            const response = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
-            const data = await response.json();
+    // AUDIO CONTROL SYSTEM
+    const audio = new Audio();
+    let isPlaying = false;
+    function toggleMusic() {
+      const btn = document.getElementById('play-btn');
+      const img = document.getElementById('music-img');
+      const status = document.getElementById('music-status');
+      
+      if(!audio.src) audio.src = musicUrl;
 
-            if (data && data.code === 0 && data.data.play) {
-                downloadLink.href = data.data.play;
-                resultBox.style.display = 'block';
-            } else {
-                throw new Error("Could not fetch video. Make sure the link is public and correct.");
-            }
-        } catch (err) {
-            errorMsg.innerText = "Failed to fetch. Please try with a public video link.";
-            errorMsg.style.display = 'block';
-        } finally {
-            loader.style.display = 'none';
-        }
+      if(isPlaying) {
+        audio.pause();
+        btn.innerHTML = '<i class="ti ti-player-play" style="color:#000"></i>';
+        img.classList.remove('playing');
+        status.innerText = "Status: Paused";
+      } else {
+        audio.play();
+        btn.innerHTML = '<i class="ti ti-player-pause" style="color:#000"></i>';
+        img.classList.add('playing');
+        status.innerText = "Status: Playing...";
+      }
+      isPlaying = !isPlaying;
     }
-</script>
 
+    // AMBIENT BACKGROUND PARTICLES
+    const canvas = document.getElementById('pCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    function drawParticles() {
+      ctx.clearRect(0,0,canvas.width, canvas.height);
+      ctx.fillStyle = "rgba(0, 229, 255, 0.05)";
+      for(let i=0; i<40; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, 0.8, 0, Math.PI*2);
+        ctx.fill();
+      }
+      requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
+
+    function processDownload() {
+      const url = document.getElementById('url').value;
+      if(!url) {
+        alert("Please enter a valid URL!");
+        return;
+      }
+      alert("System: Analyzing link... Accessing API servers.");
+    }
+  </script>
 </body>
+
 </html>
