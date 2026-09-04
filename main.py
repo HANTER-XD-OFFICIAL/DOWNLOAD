@@ -12,17 +12,22 @@ from telebot import types
 # SYSTEM ARCHITECTURE CONFIG
 # ═══════════════════════════
 app = Flask('')
+
 @app.route('/')
-def home(): return "🛡️ ULTRA-SAVE PRO CORE ENGINE: OPERATIONAL"
-def run_server(): app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
+def home():
+    return "🛡️ ULTRA-SAVE PRO CORE ENGINE: OPERATIONAL"
+
+def run_server():
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 # SYSTEM IDENTITY & CREDENTIALS
+# 🟢 Final Token Integrated
 TOKEN = "8523953940:AAGFPtYqMl2FtqbZlVrHS35H3B-SnBFHQ7g"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
 
-# YOUR CLOUDFLARE WORKER API
-WORKER_BASE = "https://muddy-scene-0ff7.alexraselchodhury.workers.dev"
+# 🟢 YOUR UNIVERSAL WORKER API NODE
+WORKER_API = "https://muddy-scene-0ff7.alexraselchodhury.workers.dev/api/download"
 
 # ASSETS & DATABASE NODES
 USER_DB = "users.json"
@@ -30,17 +35,27 @@ BAN_DB = "blacklist.json"
 VOICE_PACK_URL = "https://raw.githubusercontent.com/HANTER-XD-OFFICIAL/DOWNLOAD/main/bg-music.mp3"
 
 # ═══════════════════════════
-# DATABASE CORE LOGIC
+# CORE DATA PERSISTENCE
 # ═══════════════════════════
 def load_db(file_path):
     if os.path.exists(file_path):
         try:
-            with open(file_path, "r") as f: return json.load(f)
+            with open(file_path, "r") as f:
+                return json.load(f)
         except: return []
     return []
 
 def save_db(file_path, data):
-    with open(file_path, "w") as f: json.dump(data, f)
+    with open(file_path, "w") as f:
+        json.dump(data, f)
+
+def register_system_access(user_id):
+    users = load_db(USER_DB)
+    if user_id not in users:
+        users.append(user_id)
+        save_db(USER_DB, users)
+        return True 
+    return False
 
 def is_authorized(user_id):
     blacklist = load_db(BAN_DB)
@@ -54,42 +69,71 @@ def get_main_keyboard(user_id):
     btn_dl = types.KeyboardButton("📥 Start Download")
     btn_sup = types.KeyboardButton("☎️ Support")
     markup.row(btn_dl, btn_sup)
-    if user_id == ADMIN_ID: markup.row(types.KeyboardButton("📊 System Analytics"))
+    if user_id == ADMIN_ID:
+        btn_adm = types.KeyboardButton("📊 System Analytics")
+        markup.row(btn_adm)
     return markup
 
 # ═══════════════════════════
-# BOT HANDLERS
+# MISSION HANDLERS
 # ═══════════════════════════
 
 @bot.message_handler(commands=['start'])
 def system_boot(message):
     user_id = message.chat.id
-    if not is_authorized(user_id): return
-    
-    # Save user to DB
-    users = load_db(USER_DB)
-    if user_id not in users:
-        users.append(user_id)
-        save_db(USER_DB, users)
-        bot.send_message(ADMIN_ID, f"🔔 *NEW ACCESS:* {message.from_user.first_name} (ID: `{user_id}`)")
+    if not is_authorized(user_id):
+        bot.send_message(user_id, "❌ *System Alert: Access Forbidden.*")
+        return
 
+    first_name = message.from_user.first_name
+    is_new = register_system_access(user_id)
+    
     welcome_protocol = (
         f"🛡️ *ULTRA-SAVE PRO | CORE V2.5*\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
-        f"✨ Assalamu Alaikum, {message.from_user.first_name}!\n\n"
-        f"Welcome to the elite media extraction node. Stay righteous and "
-        f"perform your Salah on time. Success is only from Allah.\n\n"
+        f"✨ Assalamu Alaikum, {first_name}!\n\n"
+        f"Welcome to the elite media extraction node. Stay righteous "
+        f"and perform your Salah on time. Success is only from Allah.\n\n"
         f"👤 Architect: [HANTER-XD](https://t.me/HANTER_XD_OFFICIAL)\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
         f"⚠️ Instruction: Use the menu buttons below to interact."
     )
+    
     bot.send_message(user_id, welcome_protocol, parse_mode='Markdown', reply_markup=get_main_keyboard(user_id), disable_web_page_preview=True)
     
+    # 🎙️ SEND SYSTEM VOICE PACK (DIRECT BUFFER)
     try:
         audio_stream = requests.get(VOICE_PACK_URL).content
-        bot.send_audio(user_id, io.BytesIO(audio_stream), caption="🎙️ *System Identity Verified*")
+        audio_file = io.BytesIO(audio_stream)
+        audio_file.name = "system-voice.mp3"
+        bot.send_audio(user_id, audio_file, caption="🎙️ *System Identity Verified*")
     except: pass
 
+    if is_new:
+        bot.send_message(ADMIN_ID, f"🔔 *NEW ACCESS GRANTED:* {first_name} (ID: `{user_id}`)")
+
+@bot.message_handler(commands=['ban'])
+def ban_handler(message):
+    if message.chat.id == ADMIN_ID:
+        try:
+            tid = int(message.text.split()[1])
+            bl = load_db(BAN_DB); bl.append(tid); save_db(BAN_DB, bl)
+            bot.reply_to(message, f"✅ User `{tid}` blacklisted.")
+        except: bot.reply_to(message, "Usage: `/ban ID`")
+
+@bot.message_handler(commands=['unblock'])
+def unblock_handler(message):
+    if message.chat.id == ADMIN_ID:
+        try:
+            tid = int(message.text.split()[1])
+            bl = load_db(BAN_DB)
+            if tid in bl: bl.remove(tid); save_db(BAN_DB, bl)
+            bot.reply_to(message, f"✅ Access restored for `{tid}`.")
+        except: bot.reply_to(message, "Usage: `/unblock ID`")
+
+# ═══════════════════════════
+# MENU & EXTRACTION LOGIC
+# ═══════════════════════════
 @bot.message_handler(func=lambda message: True)
 def central_handler(message):
     chat_id = message.chat.id
@@ -108,77 +152,66 @@ def central_handler(message):
     elif "Analytics" in text:
         if chat_id == ADMIN_ID:
             count = len(load_db(USER_DB))
-            bot.send_message(ADMIN_ID, f"📊 *Total Users:* `{count}`")
+            bot.send_message(ADMIN_ID, f"📊 *LIVE ANALYTICS*\n━━━━━━━━━━━━━━\n👥 Total Users: `{count}`", parse_mode='Markdown')
+
+    elif text.startswith("http"):
+        bot.reply_to(message, "❌ *Blocked:* You must click *📥 Start Download* first.", parse_mode='Markdown')
 
 # ═══════════════════════════
-# EXTRACTION ENGINE (SYNCED WITH WORKER API)
+# UNIFIED EXTRACTION ENGINE (UNIVERSAL WORKER)
 # ═══════════════════════════
 def process_extraction(message):
     input_text = message.text.strip()
     chat_id = message.chat.id
     
-    # URL Cleaner: Fixes the TikTok Lite shared text issue
+    # Allow user to switch back to menu buttons
+    if "Support" in input_text or "Start Download" in input_text or "Analytics" in input_text:
+        central_handler(message)
+        return
+
+    # URL Cleaner (Extract ONLY the URL to fix shared text issues)
     url_match = re.search(r'(https?://[^\s]+)', input_text)
     if not url_match:
         bot.send_message(chat_id, "❌ *Error:* No valid URL detected.")
         return
     url = url_match.group(1)
 
-    wait_log = bot.send_message(chat_id, "⚡ *Decrypting Media Node...*", parse_mode='Markdown')
+    wait_log = bot.send_message(chat_id, "⚡ *Decrypting Universal Media Node...*", parse_mode='Markdown')
     try:
-        # 1. TIKTOK LOGIC (Using TikWM via requests)
-        if "tiktok.com" in url:
-            res = requests.get(f"https://www.tikwm.com/api/?url={url}").json()
-            if res.get('code') == 0:
-                data = res['data']
-                bot.send_video(chat_id, data['play'], caption=f"✅ *TikTok Success*\n👤 @{data['author']['unique_id']}")
-                if data.get('music'): bot.send_audio(chat_id, data['music'], caption="🎵 *Audio Pack*")
-            else: raise Exception("TikTok API Failed")
+        # POST Request to your specific Worker API
+        payload = {"url": url}
+        res = requests.post(WORKER_API, json=payload).json()
 
-        # 2. FACEBOOK LOGIC (Using YOUR Worker API)
-        elif "facebook.com" in url or "fb.watch" in url or "fb.gg" in url:
-            res = requests.post(f"{WORKER_BASE}/api/download", json={"url": url}).json()
-            v_url = res.get('hdplay') or res.get('play')
-            if v_url:
-                bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*")
-            else: raise Exception("FB Extraction Failed")
+        video_url = res.get('hdplay') or res.get('play')
+        audio_url = res.get('music')
 
-        # 3. YOUTUBE / INSTAGRAM (Using Multi-Platform Node)
-        elif any(x in url for x in ["youtube.com", "youtu.be", "instagram.com"]):
-            res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={url}").json()
-            if res.get('play'):
-                bot.send_video(chat_id, res['play'], caption="✅ *Extraction Successful*")
-            else: raise Exception("YT/IG Extraction Failed")
+        if video_url:
+            caption = f"✅ *Extraction Successful*\n\n🔗 [Source Link]({url})\n\n_Engineered by HANTER-XD_"
+            bot.send_video(chat_id, video_url, caption=caption, parse_mode='Markdown')
+            if audio_url:
+                bot.send_audio(chat_id, audio_url, caption="🎵 *Audio Core Extracted*")
+        
+        elif res.get('images'):
+            # TikTok Slideshow Handling
+            for img in res.get('images'):
+                bot.send_photo(chat_id, img)
+            bot.send_message(chat_id, "✅ *Slideshow Nodes Extracted.*")
+            
+        else:
+            raise Exception("No playable media found")
 
-    except:
+    except Exception:
         bot.send_message(chat_id, "⚠️ *Failure:* Content Private, Dead, or Node Restricted.")
     finally:
         bot.delete_message(chat_id, wait_log.message_id)
 
 # ═══════════════════════════
-# ADMIN CONTROL NODE
+# EXECUTION START
 # ═══════════════════════════
-@bot.message_handler(commands=['ban'])
-def ban_protocol(message):
-    if message.chat.id == ADMIN_ID:
-        try:
-            target = int(message.text.split()[1])
-            bl = load_db(BAN_DB); bl.append(target); save_db(BAN_DB, bl)
-            bot.reply_to(message, f"✅ User `{target}` blacklisted.")
-        except: bot.reply_to(message, "Usage: `/ban ID`")
-
-@bot.message_handler(commands=['unblock'])
-def unblock_protocol(message):
-    if message.chat.id == ADMIN_ID:
-        try:
-            target = int(message.text.split()[1])
-            bl = load_db(BAN_DB)
-            if target in bl:
-                bl.remove(target); save_db(BAN_DB, bl)
-                bot.reply_to(message, f"✅ Access restored for `{target}`.")
-        except: bot.reply_to(message, "Usage: `/unblock ID`")
-
 if __name__ == "__main__":
     Thread(target=run_server).start()
+    print("ULTRA-SAVE PRO SYSTEM: ONLINE")
+    
+    # Safety reset to clear conflict error 409
     bot.remove_webhook()
     bot.infinity_polling()
