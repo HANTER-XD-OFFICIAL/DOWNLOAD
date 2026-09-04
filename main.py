@@ -25,8 +25,8 @@ TOKEN = "8523953940:AAGFPtYqMl2FtqbZlVrHS35H3B-SnBFHQ7g"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
 
-# MASTER API ENDPOINT
-WORKER_API = "https://muddy-scene-0ff7.alexraselchodhury.workers.dev/api/download"
+# 🟢 YOUR MASTER WORKER API (Root URL Fix)
+WORKER_BASE = "https://muddy-scene-0ff7.alexraselchodhury.workers.dev"
 VOICE_PACK_URL = "https://raw.githubusercontent.com/HANTER-XD-OFFICIAL/DOWNLOAD/main/bg-music.mp3"
 
 # ═══════════════════════════
@@ -47,10 +47,9 @@ def system_boot(message):
         f"⚡ *OMNISTREAM | UNIVERSAL 8K & MP3*\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
         f"✨ *Assalamu Alaikum, {message.from_user.first_name}!*\n\n"
-        f"The system core is online. This node is synchronized with "
-        f"your Cloudflare Worker VIP Mirror.\n\n"
-        f"📢 *Devotional Reminder:*\n"
-        f"Success belongs to those who pray. Keep your Salah.\n"
+        f"The extraction core is now active. This system is linked to your "
+        f"Cloudflare Worker for direct high-speed media delivery.\n\n"
+        f"📢 *Reminder:* Success is a gift from Allah. Keep your Salah.\n"
         f"━━━━━━━━━━━━━━━━━━━━━"
     )
     bot.send_message(message.chat.id, welcome_protocol, parse_mode='Markdown', reply_markup=get_main_keyboard())
@@ -69,87 +68,81 @@ def central_handler(message):
     elif "Support" in text:
         markup = types.InlineKeyboardMarkup()
         markup.add(types.InlineKeyboardButton("✈️ Contact Architect", url="https://t.me/HANTER_XD_OFFICIAL"))
-        bot.send_message(message.chat.id, "🛡️ *Support Node: Developer Identity Verified*", reply_markup=markup)
+        bot.send_message(message.chat.id, "🛡️ *Support Node: Active*", reply_markup=markup)
     elif text.startswith("http"):
-        initiate_extraction(message)
+        execute_direct_extraction(message)
 
 # ═══════════════════════════
-# OMNISTREAM DECRYPTION ENGINE (FIXED V3.0)
+# DIRECT EXTRACTION ENGINE
 # ═══════════════════════════
 
-def initiate_extraction(message):
+def execute_direct_extraction(message):
     input_text = message.text.strip()
     chat_id = message.chat.id
     
-    # URL Recognition
+    # URL Cleaning Logic
     url_match = re.search(r'(https?://[^\s]+)', input_text)
     if not url_match:
         return
     url = url_match.group(1)
 
-    wait_log = bot.send_message(chat_id, "🛰️ *INITIATING DECRYPTION PROTOCOL...*", parse_mode='Markdown')
+    wait_log = bot.send_message(chat_id, "🛰️ *EXECUTING EXTRACTION PROTOCOL...*", parse_mode='Markdown')
     
     try:
-        # Browser-Mimicking Headers (Cobalt Optimized)
+        # High-End Headers for Worker Communication
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
-            "Origin": "https://hanter-xd-official.github.io",
-            "Referer": "https://hanter-xd-official.github.io/"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         }
         
-        # Dispatching request to your Worker
-        response = requests.post(
-            WORKER_API, 
-            json={"url": url, "videoQuality": "1080"}, 
-            headers=headers, 
-            timeout=50
-        )
+        # Payload optimized for your Worker
+        payload = {"url": url}
         
-        # Check if the response is empty
+        # Trying the Root endpoint first (Standard for most Workers)
+        response = requests.post(f"{WORKER_BASE}/", json=payload, headers=headers, timeout=60)
+        
+        # If Root gives 404, try /api/download as fallback
+        if response.status_code == 404:
+            response = requests.post(f"{WORKER_BASE}/api/download", json=payload, headers=headers, timeout=60)
+
         if not response.text:
-            raise Exception("Remote Node returned an empty response (Char 0).")
+            raise Exception("Empty stream from Remote Node.")
 
-        try:
-            res_data = response.json()
-        except json.JSONDecodeError:
-            raise Exception(f"API Error: Received invalid non-JSON data from Node. (Status: {response.status_code})")
+        res_data = response.json()
 
-        # Dynamic Quality Parsing
-        v_url = res_data.get('url') or (res_data.get('data', {}).get('play') if isinstance(res_data.get('data'), dict) else None) or res_data.get('hdplay') or res_data.get('play')
-        a_url = res_data.get('music') or (res_data.get('data', {}).get('music') if isinstance(res_data.get('data'), dict) else None)
+        # Parsing Video and Audio from your API logic
+        v_url = res_data.get('url') or res_data.get('play') or res_data.get('hdplay')
+        a_url = res_data.get('music')
+        
+        # Handling TikTok Data Structure specifically if nested
+        if not v_url and 'data' in res_data:
+            v_url = res_data['data'].get('play') or res_data['data'].get('hdplay')
+            a_url = res_data['data'].get('music')
 
         if not v_url and not res_data.get('images'):
-            error_details = res_data.get('message') or res_data.get('error') or "Protocol rejected by API Node."
-            raise Exception(error_details)
+            raise Exception(res_data.get('message') or "API rejected the stream node.")
 
-        # Execution Phase
+        # FINAL DELIVERY
         bot.delete_message(chat_id, wait_log.message_id)
         
         if v_url:
-            bot.send_message(chat_id, "⚡ *DECRYPTION SUCCESSFUL*\n\nDelivering high-fidelity stream...", parse_mode='Markdown')
-            # Using send_video to send the file directly
-            bot.send_video(chat_id, v_url, caption="✅ *STREAM DELIVERED BY OMNISTREAM CORE*\n\n_Engineered by HANTER-XD_")
+            bot.send_video(chat_id, v_url, caption="✅ *STREAM EXTRACTED SUCCESSFULLY*\n\n_Engineered by HANTER-XD_")
         
         if a_url:
-            bot.send_audio(chat_id, a_url, caption="🎵 *STUDIO MP3 MASTER EXTRACTED*")
+            bot.send_audio(chat_id, a_url, caption="🎵 *MASTER AUDIO EXTRACTED*")
             
         if res_data.get('images'):
             for img in res_data.get('images'):
                 bot.send_photo(chat_id, img)
-            bot.send_message(chat_id, "✅ *SLIDESHOW NODES EXTRACTED*")
+            bot.send_message(chat_id, "✅ *SLIDESHOW EXTRACTED*")
 
     except Exception as e:
-        # Admin Debug Mode
         if chat_id == ADMIN_ID:
             bot.edit_message_text(f"⚠️ *Admin Debug:* {str(e)}", chat_id, wait_log.message_id, parse_mode='Markdown')
         else:
-            bot.edit_message_text("⚠️ *System Failure:* The link is restricted or the API node is busy. Please try again in 1 minute.", chat_id, wait_log.message_id, parse_mode='Markdown')
+            bot.edit_message_text("⚠️ *Failure:* The link is private or the API engine is busy. Please try again.", chat_id, wait_log.message_id)
 
-# ═══════════════════════════
-# EXECUTION START
-# ═══════════════════════════
 if __name__ == "__main__":
     Thread(target=run_server).start()
     bot.remove_webhook()
