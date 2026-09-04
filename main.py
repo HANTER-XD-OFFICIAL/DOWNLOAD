@@ -17,7 +17,7 @@ def home(): return "🛡️ ULTRA-SAVE PRO CORE ENGINE: OPERATIONAL"
 def run_server(): app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 # SYSTEM IDENTITY & CREDENTIALS
-TOKEN = "8523953940:AAGzJRfKPepZypt320Wee-VReY_2KqOeYyM"
+TOKEN = "8523953940:AAGFPtYqMl2FtqbZlVrHS35H3B-SnBFHQ7g"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
 
