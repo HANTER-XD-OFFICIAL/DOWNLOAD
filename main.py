@@ -21,10 +21,8 @@ TOKEN = "8523953940:AAGFPtYqMl2FtqbZlVrHS35H3B-SnBFHQ7g"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
 
-# 🟢 MASTER API ENDPOINT (Your Worker)
+# 🟢 MASTER API ENDPOINT
 WORKER_API = "https://muddy-scene-0ff7.alexraselchodhury.workers.dev/api/download"
-
-USER_DB = "users.json"
 VOICE_PACK_URL = "https://raw.githubusercontent.com/HANTER-XD-OFFICIAL/DOWNLOAD/main/bg-music.mp3"
 
 # ═══════════════════════════
@@ -43,21 +41,20 @@ def get_main_keyboard(user_id):
 
 @bot.message_handler(commands=['start'])
 def system_boot(message):
-    user_id = message.chat.id
     welcome_protocol = (
         f"⚡ *OMNISTREAM | UNIVERSAL 8K & MP3*\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
         f"✨ *Assalamu Alaikum, {message.from_user.first_name}!*\n\n"
-        f"Master API Engine powering 21+ platforms. Integrated with "
+        f"Master API Engine powering all platforms. Integrated with "
         f"Cloudflare Worker VIP Mirror.\n\n"
         f"📢 *Reminder:* Success comes from Allah. Keep your Salah.\n"
         f"━━━━━━━━━━━━━━━━━━━━━"
     )
-    bot.send_message(user_id, welcome_protocol, parse_mode='Markdown', reply_markup=get_main_keyboard(user_id))
+    bot.send_message(message.chat.id, welcome_protocol, parse_mode='Markdown', reply_markup=get_main_keyboard(message.chat.id))
     
     try:
         audio_stream = requests.get(VOICE_PACK_URL).content
-        bot.send_audio(user_id, io.BytesIO(audio_stream), caption="🎙️ *Hanter-XD System Audio*")
+        bot.send_audio(message.chat.id, io.BytesIO(audio_stream), caption="🎙️ *Hanter-XD System Audio*")
     except: pass
 
 @bot.message_handler(func=lambda message: True)
@@ -68,86 +65,61 @@ def central_handler(message):
     elif "Support" in text:
         markup = types.InlineKeyboardMarkup()
         markup.add(types.InlineKeyboardButton("✈️ Contact Architect", url="https://t.me/HANTER_XD_OFFICIAL"))
-        bot.send_message(message.chat.id, "🛡️ *Identity Vault Support Node:*", reply_markup=markup)
-    elif "API & Engine Hub" in text and message.chat.id == ADMIN_ID:
-        bot.send_message(ADMIN_ID, "⚙️ *Official Master API Endpoint*\n\nURL: `https://muddy-scene-0ff7.alexrasel...` \nEngine: Cloudflare Worker (Active)")
+        bot.send_message(message.chat.id, "🛡️ *Support Node Online:*", reply_markup=markup)
     elif text.startswith("http"):
         analyze_stream(message)
 
 # ═══════════════════════════
-# OMNISTREAM ENGINE (ANALYSIS)
+# OMNISTREAM ENGINE (FIXED)
 # ═══════════════════════════
 
 def analyze_stream(message):
     input_text = message.text.strip()
     chat_id = message.chat.id
     
+    # URL Extraction
     url_match = re.search(r'(https?://[^\s]+)', input_text)
     if not url_match: return
     url = url_match.group(1)
 
-    wait_log = bot.send_message(chat_id, "🛰️ *ANALYZING & EXTRACTING QUALITIES...*", parse_mode='Markdown')
+    wait_log = bot.send_message(chat_id, "🛰️ *ANALYZING STREAM QUALITIES...*", parse_mode='Markdown')
     
     try:
-        # POST Request to your Worker
-        res = requests.post(WORKER_API, json={"url": url}, timeout=30).json()
+        # Headers are crucial for Worker APIs
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        }
+        
+        # POST to your specific worker
+        response = requests.post(WORKER_API, json={"url": url}, headers=headers, timeout=30)
+        res = response.json()
 
-        # Build Results UI (Matrix style)
-        thumb = res.get('cover') or "https://img.freepik.com/free-vector/cyber-security-concept_23-2148532223.jpg"
-        
-        # Matrix Buttons
-        markup = types.InlineKeyboardMarkup(row_width=1)
-        
-        v_url = res.get('hdplay') or res.get('play')
+        # If Worker returns an error status
+        if res.get('status') == 'error' or not (res.get('url') or res.get('play') or res.get('hdplay')):
+            raise Exception("API returned no valid media")
+
+        # Extraction logic
+        v_url = res.get('url') or res.get('hdplay') or res.get('play')
         a_url = res.get('music')
+        thumb = res.get('cover') or res.get('thumbnail') or "https://img.freepik.com/free-vector/cyber-security-concept_23-2148532223.jpg"
 
-        if v_url:
-            markup.add(types.InlineKeyboardButton("📥 DOWNLOAD VIDEO STREAM (HD)", callback_data=f"dl_v|{url}"))
-        if a_url:
-            markup.add(types.InlineKeyboardButton("🎵 EXTRACT MP3 MASTER AUDIO (320 KBPS)", callback_data=f"dl_a|{url}"))
-        
-        caption = (
-            f"🎬 *MEDIA STREAM ANALYSIS*\n"
-            f"━━━━━━━━━━━━━━━━━━━━━\n"
-            f"✅ *Status:* [ READY ]\n"
-            f"💎 *Engine:* VIP Cloudflare Mirror\n"
-            f"📥 *Target:* Supported Node Detected\n\n"
-            f"Select your preferred quality from the *Dynamic Matrix* below:"
-        )
-
-        bot.send_photo(chat_id, thumb, caption=caption, parse_mode='Markdown', reply_markup=markup)
-
-    except:
-        bot.send_message(chat_id, "⚠️ *Failure:* Content is Restricted or Engine is busy.")
-    finally:
+        # RESULTS UI
         bot.delete_message(chat_id, wait_log.message_id)
-
-# ═══════════════════════════
-# CALLBACK HANDLER (FINAL EXTRACTION)
-# ═══════════════════════════
-
-@bot.callback_query_handler(func=lambda call: True)
-def process_selection(call):
-    mode, url = call.data.split('|')
-    chat_id = call.message.chat.id
-
-    bot.answer_callback_query(call.id, "Mission Initiated. Extracting Data...")
-    wait = bot.send_message(chat_id, "⚡ *EXECUTING EXTRACTION PROTOCOL...*")
-
-    try:
-        res = requests.post(WORKER_API, json={"url": url}, timeout=30).json()
         
-        if mode == "dl_v":
-            target = res.get('hdplay') or res.get('play')
-            bot.send_video(chat_id, target, caption="✅ *ULTRA HD STREAM DELIVERED*")
-        else:
-            target = res.get('music')
-            bot.send_audio(chat_id, target, caption="🎵 *STUDIO MP3 MASTER EXTRACTED*")
-            
-    except:
-        bot.send_message(chat_id, "❌ *Protocol Error.* Extraction failed.")
-    finally:
-        bot.delete_message(chat_id, wait.message_id)
+        # Directly sending the media to avoid callback character limits
+        if v_url:
+            bot.send_message(chat_id, "⚡ *DECRYPTION SUCCESSFUL*\n\nInitiating direct file delivery...", parse_mode='Markdown')
+            bot.send_video(chat_id, v_url, caption="✅ *ULTRA HD STREAM DELIVERED*\n\n_Engineered by HANTER-XD_")
+        
+        if a_url:
+            bot.send_audio(chat_id, a_url, caption="🎵 *STUDIO MP3 MASTER EXTRACTED*")
+
+    except Exception as e:
+        # Detailed error for you to debug
+        print(f"Extraction Error: {e}")
+        bot.edit_message_text("⚠️ *Failure:* Content is Private, Restricted, or API Node is unreachable.", chat_id, wait_log.message_id, parse_mode='Markdown')
 
 # ═══════════════════════════
 # EXECUTION
