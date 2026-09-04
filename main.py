@@ -20,7 +20,7 @@ def home():
 def run_server():
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
-# SYSTEM IDENTITY & CREDENTIALS
+# SYSTEM IDENTITY
 TOKEN = "8523953940:AAGFPtYqMl2FtqbZlVrHS35H3B-SnBFHQ7g"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
@@ -47,10 +47,10 @@ def system_boot(message):
         f"⚡ *OMNISTREAM | UNIVERSAL 8K & MP3*\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
         f"✨ *Assalamu Alaikum, {message.from_user.first_name}!*\n\n"
-        f"Welcome to the high-fidelity media extraction engine. This core "
-        f"is integrated with Cloudflare Worker VIP Mirror nodes.\n\n"
+        f"The system core is online. This node is synchronized with "
+        f"your Cloudflare Worker VIP Mirror.\n\n"
         f"📢 *Devotional Reminder:*\n"
-        f"True success is attained through obedience to Allah. Keep your Salah.\n"
+        f"Success belongs to those who pray. Keep your Salah.\n"
         f"━━━━━━━━━━━━━━━━━━━━━"
     )
     bot.send_message(message.chat.id, welcome_protocol, parse_mode='Markdown', reply_markup=get_main_keyboard())
@@ -65,7 +65,7 @@ def system_boot(message):
 def central_handler(message):
     text = message.text
     if "Downloader" in text:
-        bot.send_message(message.chat.id, "🛰️ *OMNISTREAM READY*\n\nPlease paste the media stream URL (TikTok, FB, YT, IG) below:")
+        bot.send_message(message.chat.id, "🛰️ *OMNISTREAM READY*\n\nPlease paste the media stream URL below:")
     elif "Support" in text:
         markup = types.InlineKeyboardMarkup()
         markup.add(types.InlineKeyboardButton("✈️ Contact Architect", url="https://t.me/HANTER_XD_OFFICIAL"))
@@ -74,7 +74,7 @@ def central_handler(message):
         initiate_extraction(message)
 
 # ═══════════════════════════
-# OMNISTREAM DECRYPTION ENGINE
+# OMNISTREAM DECRYPTION ENGINE (FIXED V3.0)
 # ═══════════════════════════
 
 def initiate_extraction(message):
@@ -90,32 +90,46 @@ def initiate_extraction(message):
     wait_log = bot.send_message(chat_id, "🛰️ *INITIATING DECRYPTION PROTOCOL...*", parse_mode='Markdown')
     
     try:
-        # Browser-Mimicking Headers to bypass Cloudflare protection
+        # Browser-Mimicking Headers (Cobalt Optimized)
         headers = {
-            "Content-Type": "application/json",
             "Accept": "application/json",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+            "Origin": "https://hanter-xd-official.github.io",
+            "Referer": "https://hanter-xd-official.github.io/"
         }
         
         # Dispatching request to your Worker
-        response = requests.post(WORKER_API, json={"url": url}, headers=headers, timeout=45)
-        res_data = response.json()
+        response = requests.post(
+            WORKER_API, 
+            json={"url": url, "videoQuality": "1080"}, 
+            headers=headers, 
+            timeout=50
+        )
+        
+        # Check if the response is empty
+        if not response.text:
+            raise Exception("Remote Node returned an empty response (Char 0).")
+
+        try:
+            res_data = response.json()
+        except json.JSONDecodeError:
+            raise Exception(f"API Error: Received invalid non-JSON data from Node. (Status: {response.status_code})")
 
         # Dynamic Quality Parsing
-        # Checking for different API response structures (Cobalt/TikWM/Custom)
         v_url = res_data.get('url') or (res_data.get('data', {}).get('play') if isinstance(res_data.get('data'), dict) else None) or res_data.get('hdplay') or res_data.get('play')
-        
         a_url = res_data.get('music') or (res_data.get('data', {}).get('music') if isinstance(res_data.get('data'), dict) else None)
 
         if not v_url and not res_data.get('images'):
-            error_msg = res_data.get('message') or "Access Denied by API Node"
-            raise Exception(error_msg)
+            error_details = res_data.get('message') or res_data.get('error') or "Protocol rejected by API Node."
+            raise Exception(error_details)
 
         # Execution Phase
         bot.delete_message(chat_id, wait_log.message_id)
         
         if v_url:
             bot.send_message(chat_id, "⚡ *DECRYPTION SUCCESSFUL*\n\nDelivering high-fidelity stream...", parse_mode='Markdown')
+            # Using send_video to send the file directly
             bot.send_video(chat_id, v_url, caption="✅ *STREAM DELIVERED BY OMNISTREAM CORE*\n\n_Engineered by HANTER-XD_")
         
         if a_url:
@@ -131,14 +145,12 @@ def initiate_extraction(message):
         if chat_id == ADMIN_ID:
             bot.edit_message_text(f"⚠️ *Admin Debug:* {str(e)}", chat_id, wait_log.message_id, parse_mode='Markdown')
         else:
-            bot.edit_message_text("⚠️ *System Failure:* Content is private, restricted, or the API node is unreachable. Please try another link.", chat_id, wait_log.message_id, parse_mode='Markdown')
+            bot.edit_message_text("⚠️ *System Failure:* The link is restricted or the API node is busy. Please try again in 1 minute.", chat_id, wait_log.message_id, parse_mode='Markdown')
 
 # ═══════════════════════════
 # EXECUTION START
 # ═══════════════════════════
 if __name__ == "__main__":
     Thread(target=run_server).start()
-    
-    # Prevents "Conflict 409" on Render deployment
     bot.remove_webhook()
     bot.infinity_polling()
