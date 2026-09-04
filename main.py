@@ -63,19 +63,19 @@ def system_boot(message):
 def central_handler(message):
     text = message.text
     if "Downloader" in text:
-        bot.send_message(message.chat.id, "🛰️ *OMNISTREAM READY*\n\nPlease paste any link (YT, TikTok, FB, IG, etc):")
+        bot.send_message(message.chat.id, "🛰️ *OMNISTREAM READY*\n\nPlease paste any link (YT, TikTok, FB, Twitter, IG, Pin) below:")
     elif "Support" in text:
         markup = types.InlineKeyboardMarkup()
         markup.add(types.InlineKeyboardButton("✈️ Contact Architect", url="https://t.me/HANTER_XD_OFFICIAL"))
         bot.send_message(message.chat.id, "🛡️ *Support Node: Online*", reply_markup=markup)
     elif text.startswith("http"):
-        execute_universal_extraction(message)
+        execute_binary_extraction(message)
 
 # ═══════════════════════════
-# ENHANCED EXTRACTION ENGINE
+# BINARY EXTRACTION ENGINE (V5.0)
 # ═══════════════════════════
 
-def execute_universal_extraction(message):
+def execute_binary_extraction(message):
     input_text = message.text.strip()
     chat_id = message.chat.id
     
@@ -83,68 +83,67 @@ def execute_universal_extraction(message):
     if not url_match: return
     url = url_match.group(1)
 
-    wait_log = bot.send_message(chat_id, "🛰️ *INITIATING BYPASS PROTOCOL...*", parse_mode='Markdown')
+    wait_log = bot.send_message(chat_id, "🛰️ *BYPASSING ENCRYPTION & FETCHING FILE...*", parse_mode='Markdown')
     
     try:
-        # Specialized Headers for Cobalt/Worker Nodes
+        # Specialized Headers to bypass Cobalt strict security
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Origin": "https://cobalt.tools",
+            "Referer": "https://cobalt.tools/"
         }
         
-        # Enhanced Payload to bypass YouTube/IG restrictions
+        # Payload optimized for Universal Extraction
         payload = {
             "url": url,
-            "videoQuality": "1080",
+            "videoQuality": "720", # Lower to 720 for faster server-to-telegram upload
             "audioFormat": "mp3",
             "downloadMode": "video",
-            "alwaysProxy": True # Essential for YouTube
+            "alwaysProxy": True
         }
         
-        # Requesting Worker
-        response = requests.post(f"{WORKER_BASE}/", json=payload, headers=headers, timeout=90)
+        # Request to API
+        response = requests.post(f"{WORKER_BASE}/", json=payload, headers=headers, timeout=120)
         
-        # Fallback to /api/download if root is 404
-        if response.status_code == 404:
-            response = requests.post(f"{WORKER_BASE}/api/download", json=payload, headers=headers, timeout=90)
+        if response.status_code != 200:
+            # Try /api/download fallback
+            response = requests.post(f"{WORKER_BASE}/api/download", json=payload, headers=headers, timeout=120)
 
         res_data = response.json()
 
-        # Handle Cobalt Response Statuses
-        status = res_data.get('status')
-        v_url = res_data.get('url') or res_data.get('play') or res_data.get('hdplay')
+        # Detection of the Stream URL
+        v_url = res_data.get('url') or res_data.get('play') or (res_data.get('data', {}).get('play') if isinstance(res_data.get('data'), dict) else None)
         
-        # Check if response contains a list of media (Instagram/Slideshows)
-        if status == 'picker' or 'picker' in res_data:
+        # If API returns a media picker (Multiple videos like Instagram/Twitter)
+        if res_data.get('status') == 'picker':
             bot.delete_message(chat_id, wait_log.message_id)
-            picker_items = res_data.get('picker', [])
-            for item in picker_items:
-                bot.send_video(chat_id, item.get('url'))
-            bot.send_message(chat_id, "✅ *ALL NODES EXTRACTED FROM PICKER*")
+            for item in res_data.get('picker', []):
+                bot.send_video(chat_id, item['url'])
             return
 
-        # Handle nested data structure
-        if not v_url and 'data' in res_data:
-            v_url = res_data['data'].get('play') or res_data['data'].get('hdplay')
-
         if not v_url:
-            raise Exception(res_data.get('text') or "API Node rejected the request.")
+            # Attempt to show reason
+            reason = res_data.get('text') or "Node rejected source."
+            raise Exception(reason)
 
-        # DELIVERY
+        # FINAL STEP: Send the Direct Video File
         bot.delete_message(chat_id, wait_log.message_id)
         
-        # Detect if source is audio-based
-        if any(x in url for x in ["soundcloud", "music.youtube", "spotify"]):
-            bot.send_audio(chat_id, v_url, caption="✅ *AUDIO CORE DELIVERED*")
-        else:
-            bot.send_video(chat_id, v_url, caption="✅ *STREAM DELIVERED SUCCESSFULLY*\n\n_Engineered by HANTER-XD_")
+        # Send video file directly to Telegram
+        bot.send_video(
+            chat_id, 
+            v_url, 
+            caption=f"✅ *FILE DECRYPTED & DELIVERED*\n\n_Engineered by HANTER-XD_",
+            parse_mode='Markdown'
+        )
 
     except Exception as e:
         if chat_id == ADMIN_ID:
             bot.edit_message_text(f"⚠️ *Admin Debug:* {str(e)}", chat_id, wait_log.message_id)
         else:
-            bot.edit_message_text("⚠️ *System Failure:* Node is restricted or link is invalid. Try again shortly.", chat_id, wait_log.message_id)
+            bot.edit_message_text("⚠️ *System Failure:* Content is restricted or API node is currently unreachable. Please verify the link.", chat_id, wait_log.message_id)
 
 if __name__ == "__main__":
     Thread(target=run_server).start()
