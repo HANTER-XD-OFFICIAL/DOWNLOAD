@@ -17,9 +17,12 @@ def home(): return "🛡️ ULTRA-SAVE PRO CORE ENGINE: OPERATIONAL"
 def run_server(): app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 # SYSTEM IDENTITY & CREDENTIALS
-TOKEN = "8523953940:AAHAOFXLJC6BLhV4R8r0ZqmuCNDjx-a9ntw"
+TOKEN = "8523953940:AAGzJRfKPepZypt320Wee-VReY_2KqOeYyM"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
+
+# YOUR CLOUDFLARE WORKER API
+WORKER_BASE = "https://muddy-scene-0ff7.alexraselchodhury.workers.dev"
 
 # ASSETS & DATABASE NODES
 USER_DB = "users.json"
@@ -44,16 +47,6 @@ def is_authorized(user_id):
     return user_id not in blacklist
 
 # ═══════════════════════════
-# CORE API DECRYPTION (XOR - FROM HTML FILE)
-# ═══════════════════════════
-def decrypt_api_nodes():
-    _k = 0x5A
-    _fa = [0x32, 0x5A, 0x2E, 0x5A, 0x2E, 0x5A, 0x2A, 0x5A, 0x29, 0x5A, 0x60, 0x5A, 0x75, 0x5A, 0x75, 0x5A, 0x3C, 0x5A, 0x3C, 0x5A, 0x77, 0x5A, 0x33, 0x5A, 0x33, 0x5A, 0x74, 0x5A, 0x35, 0x5A, 0x34, 0x5A, 0x28, 0x5A, 0x3F, 0x5A, 0x34, 0x5A, 0x3E, 0x5A, 0x3F, 0x5A, 0x28, 0x5A, 0x74, 0x5A, 0x39, 0x5A, 0x35, 0x5A, 0x37, 0x5A]
-    return "".join([chr(x ^ _k) for x in _fa if x != _k])
-
-FB_BASE_NODE = decrypt_api_nodes()
-
-# ═══════════════════════════
 # PREMIUM INTERFACE BUILDER
 # ═══════════════════════════
 def get_main_keyboard(user_id):
@@ -73,6 +66,13 @@ def system_boot(message):
     user_id = message.chat.id
     if not is_authorized(user_id): return
     
+    # Save user to DB
+    users = load_db(USER_DB)
+    if user_id not in users:
+        users.append(user_id)
+        save_db(USER_DB, users)
+        bot.send_message(ADMIN_ID, f"🔔 *NEW ACCESS:* {message.from_user.first_name} (ID: `{user_id}`)")
+
     welcome_protocol = (
         f"🛡️ *ULTRA-SAVE PRO | CORE V2.5*\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
@@ -111,13 +111,13 @@ def central_handler(message):
             bot.send_message(ADMIN_ID, f"📊 *Total Users:* `{count}`")
 
 # ═══════════════════════════
-# EXTRACTION ENGINE (CLEAN URL LOGIC)
+# EXTRACTION ENGINE (SYNCED WITH WORKER API)
 # ═══════════════════════════
 def process_extraction(message):
     input_text = message.text.strip()
     chat_id = message.chat.id
     
-    # URL Cleaner: Extract ONLY the URL from the text (Fixes TikTok Lite issue)
+    # URL Cleaner: Fixes the TikTok Lite shared text issue
     url_match = re.search(r'(https?://[^\s]+)', input_text)
     if not url_match:
         bot.send_message(chat_id, "❌ *Error:* No valid URL detected.")
@@ -126,30 +126,57 @@ def process_extraction(message):
 
     wait_log = bot.send_message(chat_id, "⚡ *Decrypting Media Node...*", parse_mode='Markdown')
     try:
-        # 1. TIKTOK (Exact Same API as your HTML)
+        # 1. TIKTOK LOGIC (Using TikWM via requests)
         if "tiktok.com" in url:
             res = requests.get(f"https://www.tikwm.com/api/?url={url}").json()
             if res.get('code') == 0:
                 data = res['data']
                 bot.send_video(chat_id, data['play'], caption=f"✅ *TikTok Success*\n👤 @{data['author']['unique_id']}")
                 if data.get('music'): bot.send_audio(chat_id, data['music'], caption="🎵 *Audio Pack*")
-            else: raise Exception("API Error")
+            else: raise Exception("TikTok API Failed")
 
-        # 2. FACEBOOK (Same POST logic as your HTML)
-        elif "facebook.com" in url or "fb.watch" in url:
-            res = requests.post(f"{FB_BASE_NODE}/api/download", json={"url": url}).json()
+        # 2. FACEBOOK LOGIC (Using YOUR Worker API)
+        elif "facebook.com" in url or "fb.watch" in url or "fb.gg" in url:
+            res = requests.post(f"{WORKER_BASE}/api/download", json={"url": url}).json()
             v_url = res.get('hdplay') or res.get('play')
-            bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*")
+            if v_url:
+                bot.send_video(chat_id, v_url, caption="✅ *Facebook HD Decrypted*")
+            else: raise Exception("FB Extraction Failed")
 
-        # 3. YOUTUBE / INSTAGRAM
+        # 3. YOUTUBE / INSTAGRAM (Using Multi-Platform Node)
         elif any(x in url for x in ["youtube.com", "youtu.be", "instagram.com"]):
             res = requests.get(f"https://social-downloader-api.vercel.app/api/download?url={url}").json()
-            bot.send_video(chat_id, res['play'], caption="✅ *Extraction Successful*")
+            if res.get('play'):
+                bot.send_video(chat_id, res['play'], caption="✅ *Extraction Successful*")
+            else: raise Exception("YT/IG Extraction Failed")
 
     except:
-        bot.send_message(chat_id, "⚠️ *Failure:* Content Private or Restricted.")
+        bot.send_message(chat_id, "⚠️ *Failure:* Content Private, Dead, or Node Restricted.")
     finally:
         bot.delete_message(chat_id, wait_log.message_id)
+
+# ═══════════════════════════
+# ADMIN CONTROL NODE
+# ═══════════════════════════
+@bot.message_handler(commands=['ban'])
+def ban_protocol(message):
+    if message.chat.id == ADMIN_ID:
+        try:
+            target = int(message.text.split()[1])
+            bl = load_db(BAN_DB); bl.append(target); save_db(BAN_DB, bl)
+            bot.reply_to(message, f"✅ User `{target}` blacklisted.")
+        except: bot.reply_to(message, "Usage: `/ban ID`")
+
+@bot.message_handler(commands=['unblock'])
+def unblock_protocol(message):
+    if message.chat.id == ADMIN_ID:
+        try:
+            target = int(message.text.split()[1])
+            bl = load_db(BAN_DB)
+            if target in bl:
+                bl.remove(target); save_db(BAN_DB, bl)
+                bot.reply_to(message, f"✅ Access restored for `{target}`.")
+        except: bot.reply_to(message, "Usage: `/unblock ID`")
 
 if __name__ == "__main__":
     Thread(target=run_server).start()
