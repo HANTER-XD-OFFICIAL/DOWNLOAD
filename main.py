@@ -25,7 +25,7 @@ TOKEN = "8523953940:AAGFPtYqMl2FtqbZlVrHS35H3B-SnBFHQ7g"
 ADMIN_ID = 6204875999
 bot = telebot.TeleBot(TOKEN)
 
-# 🟢 MASTER WORKER ENDPOINT (Universal Node)
+# 🟢 MASTER WORKER ENDPOINT
 WORKER_BASE = "https://muddy-scene-0ff7.alexraselchodhury.workers.dev"
 VOICE_PACK_URL = "https://raw.githubusercontent.com/HANTER-XD-OFFICIAL/DOWNLOAD/main/bg-music.mp3"
 
@@ -47,9 +47,8 @@ def system_boot(message):
         f"⚡ *OMNISTREAM | UNIVERSAL 8K & MP3*\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
         f"✨ *Assalamu Alaikum, {message.from_user.first_name}!*\n\n"
-        f"Master API Engine active. Supporting 21+ platforms including "
-        f"YouTube, TikTok, Facebook, Instagram, Twitter, and more.\n\n"
-        f"📢 *Reminder:* Pray your Salah. It brings barakah to your work.\n"
+        f"Master API Engine active. Supporting all 21+ platforms.\n\n"
+        f"📢 *Reminder:* Pray your Salah on time. Success is from Allah.\n"
         f"━━━━━━━━━━━━━━━━━━━━━"
     )
     bot.send_message(message.chat.id, welcome_protocol, parse_mode='Markdown', reply_markup=get_main_keyboard())
@@ -64,7 +63,7 @@ def system_boot(message):
 def central_handler(message):
     text = message.text
     if "Downloader" in text:
-        bot.send_message(message.chat.id, "🛰️ *OMNISTREAM READY*\n\nPlease paste any media link from YouTube, TikTok, FB, IG, etc:")
+        bot.send_message(message.chat.id, "🛰️ *OMNISTREAM READY*\n\nPlease paste any link (YT, TikTok, FB, IG, etc):")
     elif "Support" in text:
         markup = types.InlineKeyboardMarkup()
         markup.add(types.InlineKeyboardButton("✈️ Contact Architect", url="https://t.me/HANTER_XD_OFFICIAL"))
@@ -73,86 +72,79 @@ def central_handler(message):
         execute_universal_extraction(message)
 
 # ═══════════════════════════
-# UNIVERSAL EXTRACTION ENGINE
+# ENHANCED EXTRACTION ENGINE
 # ═══════════════════════════
 
 def execute_universal_extraction(message):
     input_text = message.text.strip()
     chat_id = message.chat.id
     
-    # URL Cleaning
     url_match = re.search(r'(https?://[^\s]+)', input_text)
     if not url_match: return
     url = url_match.group(1)
 
-    wait_log = bot.send_message(chat_id, "🛰️ *EXECUTING UNIVERSAL PROTOCOL...*", parse_mode='Markdown')
+    wait_log = bot.send_message(chat_id, "🛰️ *INITIATING BYPASS PROTOCOL...*", parse_mode='Markdown')
     
     try:
-        # Standard Cobalt/Master API Headers
+        # Specialized Headers for Cobalt/Worker Nodes
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
         }
         
-        # Payload for the Worker
+        # Enhanced Payload to bypass YouTube/IG restrictions
         payload = {
             "url": url,
             "videoQuality": "1080",
             "audioFormat": "mp3",
-            "alwaysProxy": True
+            "downloadMode": "video",
+            "alwaysProxy": True # Essential for YouTube
         }
         
-        # Sending request to the Root node
-        response = requests.post(f"{WORKER_BASE}/", json=payload, headers=headers, timeout=120)
-
-        # If Node is not at root, try /api/download
+        # Requesting Worker
+        response = requests.post(f"{WORKER_BASE}/", json=payload, headers=headers, timeout=90)
+        
+        # Fallback to /api/download if root is 404
         if response.status_code == 404:
-            response = requests.post(f"{WORKER_BASE}/api/download", json=payload, headers=headers, timeout=120)
+            response = requests.post(f"{WORKER_BASE}/api/download", json=payload, headers=headers, timeout=90)
 
         res_data = response.json()
 
-        # LOGIC FOR ALL 21 PLATFORMS
-        # Cobalt status: "stream" or "redirect" or "picker"
+        # Handle Cobalt Response Statuses
+        status = res_data.get('status')
         v_url = res_data.get('url') or res_data.get('play') or res_data.get('hdplay')
-        a_url = res_data.get('music')
         
-        # Fallback for nested 'data' objects (common in TikTok APIs)
-        if not v_url and 'data' in res_data:
-            v_url = res_data['data'].get('play') or res_data['data'].get('hdplay')
-            a_url = res_data['data'].get('music')
-
-        # If API returns a list of images (TikTok slideshow)
-        if res_data.get('status') == 'picker' or 'images' in res_data:
+        # Check if response contains a list of media (Instagram/Slideshows)
+        if status == 'picker' or 'picker' in res_data:
             bot.delete_message(chat_id, wait_log.message_id)
-            media = res_data.get('picker') or res_data.get('images', [])
-            for item in media:
-                img_url = item.get('url') if isinstance(item, dict) else item
-                bot.send_photo(chat_id, img_url)
-            bot.send_message(chat_id, "✅ *SLIDESHOW NODES EXTRACTED*")
+            picker_items = res_data.get('picker', [])
+            for item in picker_items:
+                bot.send_video(chat_id, item.get('url'))
+            bot.send_message(chat_id, "✅ *ALL NODES EXTRACTED FROM PICKER*")
             return
 
-        if not v_url:
-            raise Exception(res_data.get('text') or res_data.get('message') or "API rejected the stream node.")
+        # Handle nested data structure
+        if not v_url and 'data' in res_data:
+            v_url = res_data['data'].get('play') or res_data['data'].get('hdplay')
 
-        # FINAL FILE DELIVERY
+        if not v_url:
+            raise Exception(res_data.get('text') or "API Node rejected the request.")
+
+        # DELIVERY
         bot.delete_message(chat_id, wait_log.message_id)
         
-        # Checking if it is an Audio platform (like SoundCloud) or Video
-        is_audio_only = any(x in url for x in ["soundcloud", "music.youtube"])
-        
-        if is_audio_only:
-            bot.send_audio(chat_id, v_url, caption="✅ *AUDIO EXTRACTED BY OMNISTREAM*")
+        # Detect if source is audio-based
+        if any(x in url for x in ["soundcloud", "music.youtube", "spotify"]):
+            bot.send_audio(chat_id, v_url, caption="✅ *AUDIO CORE DELIVERED*")
         else:
             bot.send_video(chat_id, v_url, caption="✅ *STREAM DELIVERED SUCCESSFULLY*\n\n_Engineered by HANTER-XD_")
-            if a_url:
-                bot.send_audio(chat_id, a_url, caption="🎵 *MASTER AUDIO CORE*")
 
     except Exception as e:
         if chat_id == ADMIN_ID:
             bot.edit_message_text(f"⚠️ *Admin Debug:* {str(e)}", chat_id, wait_log.message_id)
         else:
-            bot.edit_message_text("⚠️ *System Failure:* Content is private, unsupported, or the API node is busy.", chat_id, wait_log.message_id)
+            bot.edit_message_text("⚠️ *System Failure:* Node is restricted or link is invalid. Try again shortly.", chat_id, wait_log.message_id)
 
 if __name__ == "__main__":
     Thread(target=run_server).start()
