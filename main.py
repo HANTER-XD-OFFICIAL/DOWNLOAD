@@ -14,7 +14,7 @@ from telebot import types
 # ═══════════════════════════
 app = Flask('')
 @app.route('/')
-def home(): return "🛡️ OMNISTREAM HYBRID ENGINE V9: OPERATIONAL"
+def home(): return "🛡️ OMNISTREAM HYBRID ENGINE V10: OPERATIONAL"
 def run_server(): app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 3000)))
 
 # SYSTEM IDENTITY
@@ -25,7 +25,7 @@ bot = telebot.TeleBot(TOKEN)
 # 🔵 CLOUDFLARE WORKER (Fallback Node)
 WORKER_BASE = "https://muddy-scene-0ff7.alexraselchodhury.workers.dev"
 
-# 🔴 YOUTUBE RAPID-API CLUSTER (Rotational Load Balancing)
+# 🔴 YOUTUBE RAPID-API CLUSTER
 YT_KEYS = [
     "032d76f1d5mshb4bec8c6a6bde50p145398jsn592ea147dc00",
     "daf7c2c2admsh4f57b66f003a149p127d27jsna9e0929c2f69",
@@ -36,6 +36,16 @@ YT_KEYS = [
 ]
 
 VOICE_PACK_URL = "https://raw.githubusercontent.com/HANTER-XD-OFFICIAL/DOWNLOAD/main/bg-music.mp3"
+
+# ═══════════════════════════
+# UTILITIES
+# ═══════════════════════════
+
+def get_yt_video_id(url):
+    """Extracts 11-char video ID from any YT link"""
+    pattern = r'(?:v=|\/)([0-9A-Za-z_-]{11}).*'
+    match = re.search(pattern, url)
+    return match.group(1) if match else None
 
 # ═══════════════════════════
 # INTERFACE BUILDER
@@ -52,12 +62,12 @@ def get_main_keyboard():
 @bot.message_handler(commands=['start'])
 def system_boot(message):
     welcome_protocol = (
-        f"⚡ *OMNISTREAM | HYBRID V9.0*\n"
+        f"⚡ *OMNISTREAM | HYBRID V10.0*\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
         f"✨ *Assalamu Alaikum, {message.from_user.first_name}!*\n\n"
-        f"System ready for high-fidelity extraction. We have enabled Multi-Node "
-        f"Load Balancing for YouTube and Cloudflare VIP for others.\n\n"
-        f"📢 *Reminder:* Salah is the pillar of Islam. Don't miss it.\n"
+        f"Ultimate mission core initialized. Supporting 21+ platforms with "
+        f"advanced RapidAPI tunneling for YouTube & Shorts.\n\n"
+        f"📢 *Reminder:* Salah is the success of a believer.\n"
         f"━━━━━━━━━━━━━━━━━━━━━"
     )
     bot.send_message(message.chat.id, welcome_protocol, parse_mode='Markdown', reply_markup=get_main_keyboard())
@@ -77,14 +87,14 @@ def central_handler(message):
         markup.add(types.InlineKeyboardButton("✈️ Contact Developer", url="https://t.me/HANTER_XD_OFFICIAL"))
         bot.send_message(message.chat.id, "🛡️ *Support Node: Active*", reply_markup=markup)
     elif text.startswith("http"):
-        execute_hybrid_extraction(message)
+        execute_v10_extraction(message)
 
 # ═══════════════════════════
-# HYBRID EXTRACTION ENGINE (V9.0)
+# HYBRID EXTRACTION ENGINE (V10.0)
 # ═══════════════════════════
 
-def get_yt_link(url):
-    """Internal function to cycle through keys until one works"""
+def fetch_yt_direct(video_id):
+    """Cycles keys to fetch direct download link from RapidAPI"""
     shuffled_keys = list(YT_KEYS)
     random.shuffle(shuffled_keys)
     
@@ -92,60 +102,61 @@ def get_yt_link(url):
         try:
             headers = {
                 "x-rapidapi-key": key,
-                "x-rapidapi-host": "youtube-media-downloader.p.rapidapi.com"
+                "x-rapidapi-host": "youtube-mp3-audio-video-downloader.p.rapidapi.com"
             }
-            api_url = f"https://youtube-media-downloader.p.rapidapi.com/v2/video/details?url={url}"
-            res = requests.get(api_url, headers=headers, timeout=30).json()
+            # Using the /dl endpoint for direct video stream
+            api_url = f"https://youtube-mp3-audio-video-downloader.p.rapidapi.com/dl?id={video_id}&type=video"
+            resp = requests.get(api_url, headers=headers, timeout=30)
             
-            # Check for direct video items
-            if res.get('videos') and res['videos'].get('items'):
-                # Extract first available high-quality link
-                return res['videos']['items'][0]['url']
+            if not resp.text: continue
+            data = resp.json()
+            
+            # Parsing link from this specific API structure
+            if data.get('status') == 'success' and data.get('link'):
+                return data['link']
         except:
             continue
     return None
 
-def execute_hybrid_extraction(message):
+def execute_v10_extraction(message):
     input_text = message.text.strip()
     chat_id = message.chat.id
     url_match = re.search(r'(https?://[^\s]+)', input_text)
     if not url_match: return
     url = url_match.group(1)
 
-    wait_log = bot.send_message(chat_id, "🛰️ *INITIATING DECRYPTION PROTOCOL...*", parse_mode='Markdown')
+    wait_log = bot.send_message(chat_id, "🛰️ *EXECUTING MISSION PROTOCOL...*", parse_mode='Markdown')
     
     try:
         is_youtube = any(x in url for x in ["youtube.com", "youtu.be"])
         v_url = None
 
         if is_youtube:
-            # Try RapidAPI first with key rotation
-            v_url = get_yt_link(url)
+            vid_id = get_yt_video_id(url)
+            if vid_id:
+                v_url = fetch_yt_direct(vid_id)
             
             # Fallback to Worker if RapidAPI fails
             if not v_url:
-                payload = {"url": url, "videoQuality": "720", "alwaysProxy": True}
-                res = requests.post(f"{WORKER_BASE}/api/download", json=payload, timeout=60).json()
+                res = requests.post(f"{WORKER_BASE}/api/download", json={"url": url}, timeout=60).json()
                 v_url = res.get('url') or res.get('play')
-
         else:
-            # NON-YOUTUBE (TikTok, FB, IG)
-            payload = {"url": url, "videoQuality": "max", "alwaysProxy": True}
+            # TikTok, FB, IG (Using Root Worker Node)
             headers = {"User-Agent": "Mozilla/5.0"}
-            res = requests.post(f"{WORKER_BASE}/", json=payload, headers=headers, timeout=80).json()
+            res = requests.post(f"{WORKER_BASE}/", json={"url": url, "alwaysProxy": True}, headers=headers, timeout=80).json()
             v_url = res.get('url') or res.get('play') or (res.get('data', {}).get('play') if isinstance(res.get('data'), dict) else None)
 
         if not v_url:
-            raise Exception("All nodes rejected the stream node. Link might be private.")
+            raise Exception("Access Denied: Stream node rejected or empty response.")
 
         bot.delete_message(chat_id, wait_log.message_id)
-        bot.send_video(chat_id, v_url, caption="✅ *STREAM DELIVERED SUCCESSFULLY*\n\n_Engineered by HANTER-XD_")
+        bot.send_video(chat_id, v_url, caption="✅ *MISSION ACCOMPLISHED*\n\n_Engineered by HANTER-XD_")
 
     except Exception as e:
         if chat_id == ADMIN_ID:
             bot.edit_message_text(f"⚠️ *Admin Debug:* {str(e)}", chat_id, wait_log.message_id)
         else:
-            bot.edit_message_text("⚠️ *System Failure:* Node is currently busy or restricted. Please try again later.", chat_id, wait_log.message_id)
+            bot.edit_message_text("⚠️ *System Failure:* Content is restricted or node is busy.", chat_id, wait_log.message_id)
 
 if __name__ == "__main__":
     Thread(target=run_server).start()
